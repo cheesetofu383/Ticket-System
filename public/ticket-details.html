@@ -1,0 +1,5618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ticket Details - IT Support</title>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .navbar {
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+
+        .navbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .back-button {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: #334155;
+            padding: 9px 15px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #f1f5f9;
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page-container {
+            padding: 30px 20px 50px;
+        }
+
+        .ticket-card {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .ticket-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .ticket-header-left {
+            min-width: 0;
+        }
+
+        .ticket-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 7px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .support-badge {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .ticket-content {
+            display: grid;
+            grid-template-columns: 58% 42%;
+        }
+
+        .left-column,
+        .right-column {
+            padding: 26px 28px;
+        }
+
+        .left-column {
+            border-right: 1px solid var(--border);
+        }
+
+        .right-column {
+            background: #fbfdff;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .section {
+            margin-bottom: 27px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            margin: 0 0 13px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+        }
+
+        /* =========================
+           INFORMATION ROWS
+        ========================= */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px 20px;
+        }
+
+        .info-item {
+            min-width: 0;
+        }
+
+        .info-label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+            word-break: break-word;
+        }
+        
+        /* =========================
+           ISSUE / SERVICE RESULT
+        ========================= */
+
+        .text-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 12px 13px;
+            min-height: 55px;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #0f172a;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* =========================
+           WORK SESSION
+        ========================= */
+
+        .work-session-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 14px;
+        }
+
+        .work-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .work-row:last-child {
+            border-bottom: none;
+        }
+
+        .work-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .work-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: right;
+        }
+
+        .work-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 13px;
+        }
+
+        .sign-in-button,
+        .sign-out-button {
+            border: none;
+            border-radius: 6px;
+            padding: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .sign-in-button {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .sign-in-button:hover {
+            background: #bbf7d0;
+        }
+
+        .sign-out-button {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sign-out-button:hover {
+            background: #fecaca;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .button-area {
+            display: flex;
+            gap: 9px;
+            margin-top: 20px;
+        }
+
+        .save-button,
+        .pdf-button,
+        .delete-button {
+            flex: 1;
+            border: none;
+            border-radius: 7px;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .save-button {
+            background: var(--primary);
+            color: white;
+        }
+
+        .save-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .pdf-button {
+            background: #0f172a;
+            color: white;
+        }
+
+        .pdf-button:hover {
+            background: #1e293b;
+        }
+
+        .delete-button {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .delete-button:hover {
+            background: #fecaca;
+            color: var(--danger-dark);
+        }
+
+        /* =========================
+           APPOINTMENT STATUS
+        ========================= */
+
+        .appointment-status-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            background: #ffffff;
+        }
+
+        .appointment-status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .appointment-status-text {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .appointment-status-pending {
+            color: #92400e;
+        }
+
+        .appointment-status-confirmed {
+            color: #166534;
+        }
+
+        .appointment-status-reschedule {
+            color: #b91c1c;
+        }
+
+        .confirm-appointment-button,
+        .request-reschedule-button,
+        .reschedule-appointment-button {
+            width: 100%;
+            border: none;
+            border-radius: 7px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .confirm-appointment-button {
+            background: #16a34a;
+        }
+
+        .confirm-appointment-button:hover {
+            background: #15803d;
+        }
+
+        .request-reschedule-button {
+            background: #f59e0b;
+        }
+
+        .request-reschedule-button:hover {
+            background: #d97706;
+        }
+
+        .reschedule-appointment-button {
+            background: #2563eb;
+        }
+
+        .reschedule-appointment-button:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================
+           PDF OPTIONS MODAL
+        ========================= */
+
+        .pdf-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+            backdrop-filter: blur(3px);
+        }
+
+        .pdf-modal.hidden {
+            display: none;
+        }
+
+        .pdf-modal-box {
+            position: relative;
+            width: 100%;
+            max-width: 430px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.20);
+            animation: pdfModalAppear 0.18s ease-out;
+        }
+
+        @keyframes pdfModalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .pdf-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .pdf-modal-close:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .pdf-modal-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            border-radius: 12px;
+            font-size: 24px;
+        }
+
+        .pdf-modal-box h2 {
+            margin: 0 0 7px;
+            font-size: 19px;
+            color: #0f172a;
+        }
+
+        .pdf-modal-box p {
+            margin: 0 0 22px;
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .pdf-modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pdf-option-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 15px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #ffffff;
+            text-align: left;
+            cursor: pointer;
+            transition:
+                background 0.15s,
+                border-color 0.15s,
+                transform 0.15s;
+        }
+
+        .pdf-option-button:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .pdf-option-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        .pdf-option-button span:last-child {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .pdf-option-button strong {
+            font-size: 13px;
+            color: #0f172a;
+        }
+
+        .pdf-option-button small {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .pdf-cancel-button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .pdf-cancel-button:hover {
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        /* =========================
+           HIDDEN
+        ========================= */
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+            .ticket-content {
+                grid-template-columns: 1fr;
+            }
+
+            .left-column {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .ticket-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-badges {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .page-container {
+                padding: 15px 10px 30px;
+            }
+
+            .ticket-header,
+            .left-column,
+            .right-column {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .work-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .button-area {
+                flex-direction: column;
+            }
+
+            .pdf-modal-box {
+                padding: 25px 20px;
+            }
+        }
+        /* ============================================================
+   RESCHEDULE MODAL
+   ============================================================ */
+
+.reschedule-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+.reschedule-modal.hidden {
+    display: none;
+}
+
+.reschedule-modal-box {
+    width: 100%;
+    max-width: 520px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.reschedule-modal-box h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.reschedule-modal-box p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.reschedule-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+.reschedule-cancel-button,
+.reschedule-submit-button {
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px 18px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.reschedule-cancel-button {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.reschedule-submit-button {
+    background: #2563eb;
+    color: white;
+}
+
+.reschedule-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* =====================================================
+   KNOWLEDGE BASE
+===================================================== */
+
+.knowledge-article {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+    margin-top: 12px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.knowledge-article h3 {
+
+    margin: 6px 0;
+
+}
+
+
+.knowledge-article p {
+
+    margin: 0;
+
+    color: #64748b;
+
+}
+
+
+.knowledge-category {
+
+    display: inline-block;
+
+    background: #e0e7ff;
+
+    color: #3730a3;
+
+    padding: 4px 8px;
+
+    border-radius: 5px;
+
+    font-size: 12px;
+
+}
+
+
+.knowledge-article button {
+
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    padding: 9px 14px;
+
+    cursor: pointer;
+
+}
+
+
+.knowledge-article button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+@media (max-width: 700px) {
+
+    .knowledge-article {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+}
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================= -->
+
+    <nav class="navbar">
+
+        <div class="navbar-title">
+            IT Support
+        </div>
+
+        <button
+            class="back-button"
+            onclick="goBack()">
+
+            ← Back to Dashboard
+
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         PAGE
+    ========================= -->
+
+    <main class="page-container">
+
+        <div class="ticket-card">
+
+            <!-- =========================
+                 TICKET HEADER
+            ========================= -->
+
+            <div class="ticket-header">
+
+                <div class="ticket-header-left">
+
+                    <h1
+                        class="ticket-title"
+                        id="ticketTitle">
+
+                        Ticket
+
+                    </h1>
+
+                </div>
+
+                <div class="header-badges">
+
+                    <span
+                        class="badge status-badge"
+                        id="ticketStatusBadge">
+
+                        Open
+
+                    </span>
+
+                    <span
+                        class="badge support-badge"
+                        id="supportTypeBadge">
+
+                        -
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 CONTENT
+            ========================= -->
+
+            <div class="ticket-content">
+
+
+                <!-- =========================
+                     LEFT COLUMN
+                ========================= -->
+
+                <div class="left-column">
+
+
+                    <!-- TICKET INFORMATION -->
+
+                    <section class="section">
+
+                        <h2 class="section-title">
+                            Ticket Information
+                        </h2>
+
+                        <div class="info-grid">
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Customer ID
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="customerId">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Customer Name
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="customerName">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Email
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="email">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Ticket ID
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="ticketId">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Support Type
+                                </span>
+                            
+                                <span
+                                    class="info-value"
+                                    id="supportType">
+
+                                    -
+
+                                </span>
+
+                            </div>
+                            <div class="info-item">
+    <span class="info-label">
+        Priority
+    </span>
+    <span
+        class="info-value"
+        id="ticketPriority">
+        Medium
+    </span>
+</div>
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Assigned Engineer
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="assignedEngineer">
+
+                                    Unassigned
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Status
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="ticketStatusDisplay">
+
+                                    Open
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Created Date
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="createdDate">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="section-divider"></div>
+
+
+                    <!-- ISSUE -->
+
+                    <section class="section">
+
+                        <h2 class="section-title">
+                            Issue
+                        </h2>
+
+                        <div
+                            class="text-box"
+                            id="issue">
+
+                            No issue description provided.
+
+                        </div>
+
+                    </section>
+                    
+
+                    <div class="section-divider"></div>
+                    <!-- APPOINTMENT INFORMATION -->
+
+                    <section
+                        class="section"
+                        id="appointmentInfoSection">
+
+                        <h2 class="section-title">
+                            Appointment
+                        </h2>
+
+                        <div class="info-grid">
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Appointment Date
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="appointmentDate">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Appointment Time
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="appointmentTime">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Duration
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="appointmentDurationDisplay">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Appointment Status
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="appointmentStatusDisplay">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="section-divider"></div>
+
+                    <!-- =====================================================
+     KNOWLEDGE BASE
+====================================================== -->
+
+<div class="card" id="knowledgeBaseCard">
+
+    <h2>🔎 Related Knowledge Articles</h2>
+
+    <p id="knowledgeBaseMessage">
+        Searching for relevant troubleshooting articles...
+    </p>
+
+    <div id="knowledgeBaseResults"></div>
+
+</div>
+                    <!-- SERVICE RESULT -->
+
+                    <section class="section">
+
+                        <h2 class="section-title">
+                            Service Result
+                        </h2>
+
+                        <div
+                            class="text-box"
+                            id="serviceResultDisplay">
+
+                            No service result recorded
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- =========================
+                     RIGHT COLUMN
+                ========================= -->
+
+                <div class="right-column">
+
+
+                    <!-- EMPLOYEE WORK SESSION -->
+
+                    <section
+                        class="section"
+                        id="employeeWorkSessionSection">
+
+                        <h2 class="section-title">
+                            Employee Work Session
+                        </h2>
+
+                        <div class="work-session-box">
+
+                            <div class="work-row">
+
+                                <span class="work-label">
+                                    Sign In
+                                </span>
+
+                                <span
+                                    class="work-value"
+                                    id="employeeSignInTime">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="work-row">
+
+                                <span class="work-label">
+                                    Sign Out
+                                </span>
+
+                                <span
+                                    class="work-value"
+                                    id="employeeSignOutTime">
+
+                                    -
+
+                                </span>
+
+                            </div>
+
+                            <div class="work-row">
+
+                                <span class="work-label">
+                                    Work Duration
+                                </span>
+
+                                <span
+                                    class="work-value"
+                                    id="employeeWorkDuration">
+
+                                    0.0 hours
+
+                                </span>
+
+                            </div>
+
+                            <div class="work-buttons">
+
+                                <button
+                                    type="button"
+                                    class="sign-in-button"
+                                    onclick="employeeSignIn()">
+
+                                    Sign In
+
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="sign-out-button"
+                                    onclick="employeeSignOut()">
+
+                                    Sign Out
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- UPDATE TICKET -->
+
+                    <section class="section">
+
+                        <h2 class="section-title">
+                            Update Ticket
+                        </h2>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="assignedEngineerInput">
+
+                                Assigned Engineer
+
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="assignedEngineerInput">
+
+                                <option value="">
+                                    Select Engineer
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="statusInput">
+
+                                Ticket Status
+
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="statusInput">
+
+                                <option value="Open">
+                                    Open
+                                </option>
+
+                                <option value="In Progress">
+                                    In Progress
+                                </option>
+
+                                <option value="Pending">
+                                    Pending
+                                </option>
+
+                                <option value="Closed">
+                                    Closed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="section-divider"></div>
+
+
+                    <!-- =========================
+                         APPOINTMENT EDIT
+                    ========================= -->
+
+                    <section
+                        class="section"
+                        id="appointmentEditSection">
+
+                        <h2 class="section-title">
+                            Appointment
+                        </h2>
+
+                        <!-- APPOINTMENT DURATION -->
+
+                        <div class="form-group">
+<label
+    class="form-label"
+    id="appointmentDurationLabel"
+    for="appointmentDurationInput">
+
+    Appointment Duration (Hours)
+
+</label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="appointmentDurationInput"
+                                min="0.5"
+                                step="0.5"
+                                readonly
+                                placeholder="Enter duration">
+
+                        </div>
+
+
+                        <!-- APPOINTMENT STATUS -->
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+
+                                Appointment Status
+
+                            </label>
+
+                            <div class="appointment-status-box">
+
+                                <div class="appointment-status-header">
+
+                                    <span
+                                        id="appointmentStatusInput"
+                                        class="appointment-status-text">
+
+                                        Pending
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- PENDING -->
+
+                                <button
+                                    type="button"
+                                    id="confirmAppointmentButton"
+                                    class="confirm-appointment-button"
+                                    onclick="confirmAppointment()">
+
+                                    Confirm Appointment
+
+                                </button>
+
+
+                                <!-- CONFIRMED -->
+
+                                <button
+                                    type="button"
+                                    id="requestRescheduleButton"
+                                    class="request-reschedule-button hidden"
+                                    onclick="requestReschedule()">
+
+                                    Request Reschedule
+
+                                </button>
+
+
+                                <!-- RESCHEDULE REQUIRED -->
+
+                                <button
+                                    type="button"
+                                    id="rescheduleAppointmentButton"
+                                    class="reschedule-appointment-button hidden"
+                                    onclick="rescheduleAppointment()">
+
+                                    Reschedule Appointment
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="section-divider"></div>
+
+
+                    <!-- SERVICE RESULT EDIT -->
+
+                    <section class="section">
+
+                        <h2 class="section-title">
+                            Service Result
+                        </h2>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="serviceResultInput">
+
+                                Service Result
+
+                            </label>
+
+                            <textarea
+                                class="form-control"
+                                id="serviceResultInput"
+                                placeholder="Enter service result..."></textarea>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="section-divider"></div>
+
+
+                    <!-- SAVE / PDF / DELETE -->
+
+                    <div class="button-area">
+
+                        <button
+                            type="button"
+                            class="save-button"
+                            onclick="saveChanges()">
+
+                            Save Changes
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="pdf-button"
+                            onclick="showPDFOptions()">
+
+                            Generate PDF
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="delete-button"
+                            onclick="deleteTicket()">
+
+                            Delete Ticket
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+    <!-- =========================================================
+     RESCHEDULE APPOINTMENT MODAL
+     ========================================================= -->
+
+<div
+    id="rescheduleModal"
+    class="reschedule-modal hidden">
+
+    <div class="reschedule-modal-box">
+
+        <h2>
+            Reschedule Appointment
+        </h2>
+
+        <p>
+            Choose a new appointment slot. The system will check
+            the assigned engineer's Google Calendar before making
+            the change.
+        </p>
+
+
+        <div class="form-group">
+
+            <div class="form-group">
+
+    <label
+        class="form-label"
+        for="rescheduleEngineerInput">
+
+        Engineer
+
+    </label>
+
+    <select
+        class="form-control"
+        id="rescheduleEngineerInput">
+
+        <option value="">
+            Select Engineer
+        </option>
+
+    </select>
+
+</div>
+            <label
+                class="form-label"
+                for="rescheduleDateInput">
+
+                New Appointment Date
+
+            </label>
+
+            <input
+                type="date"
+                class="form-control"
+                id="rescheduleDateInput">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label
+                class="form-label"
+                for="rescheduleTimeInput">
+
+                New Appointment Time
+
+            </label>
+
+            <select
+                class="form-control"
+                id="rescheduleTimeInput">
+
+                <option value="">
+                    Select Time
+                </option>
+
+                <option value="08:30">
+                    8:30 AM
+                </option>
+
+                <option value="09:00">
+                    9:00 AM
+                </option>
+
+                <option value="11:30">
+                    11:30 AM
+                </option>
+
+                <option value="13:00">
+                    1:00 PM
+                </option>
+
+                <option value="15:00">
+                    3:00 PM
+                </option>
+
+                <option value="16:00">
+                    4:00 PM
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label 
+    class="form-label" 
+    id="rescheduleDurationLabel"
+    for="rescheduleDurationInput">
+
+    Appointment Duration (Hours)
+
+</label>
+
+            <input
+                type="number"
+                class="form-control"
+                id="rescheduleDurationInput"
+                min="0.5"
+                step="0.5">
+
+        </div>
+
+
+        <div class="reschedule-modal-buttons">
+
+            <button
+                type="button"
+                class="reschedule-cancel-button"
+                onclick="closeRescheduleModal()">
+
+                Cancel
+
+            </button>
+
+
+            <button
+                type="button"
+                class="reschedule-submit-button"
+                onclick="submitReschedule()">
+
+                Check & Reschedule
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- =========================
+         PDF OPTIONS MODAL
+    ========================= -->
+
+    <div
+        id="pdfModal"
+        class="pdf-modal hidden">
+
+        <div class="pdf-modal-box">
+
+            <button
+                type="button"
+                class="pdf-modal-close"
+                onclick="closePDFOptions()">
+
+                ×
+
+            </button>
+
+            <div class="pdf-modal-icon">
+                📄
+            </div>
+
+            <h2>
+                Generate Service Report
+            </h2>
+
+            <p>
+                What would you like to do with the service report?
+            </p>
+
+            <div class="pdf-modal-buttons">
+
+                <button
+                    type="button"
+                    class="pdf-option-button"
+                    onclick="handleDownloadPDF()">
+
+                    <span class="pdf-option-icon">
+                        📄
+                    </span>
+
+                    <span>
+
+                        <strong>
+                            Download PDF
+                        </strong>
+
+                        <small>
+                            Save the service report to your computer
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="pdf-option-button"
+                    onclick="handleEmailPDF()">
+
+                    <span class="pdf-option-icon">
+                        📧
+                    </span>
+
+                    <span>
+
+                        <strong>
+                            Email Service Report
+                        </strong>
+
+                        <small>
+                            Send the report directly to the customer
+                        </small>
+
+                    </span>
+
+                </button>
+
+            </div>
+
+            <button
+                type="button"
+                class="pdf-cancel-button"
+                onclick="closePDFOptions()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        let currentTicket = null;
+
+        let generatedPDF = null;
+        let generatedPDFTicketId = null;
+
+
+        // ============================================================
+        // GENERAL NAVIGATION
+        // ============================================================
+
+        function goBack() {
+
+            window.location.href = "/Dashboard.html";
+
+        }
+
+
+        // ============================================================
+        // PDF OPTIONS MODAL
+        // ============================================================
+
+        function showPDFOptions() {
+
+            const modal =
+                document.getElementById("pdfModal");
+
+            if (!modal) return;
+
+            modal.classList.remove("hidden");
+
+        }
+
+
+        function closePDFOptions() {
+
+            const modal =
+                document.getElementById("pdfModal");
+
+            if (!modal) return;
+
+            modal.classList.add("hidden");
+
+        }
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const modal =
+                    document.getElementById("pdfModal");
+
+                if (
+                    modal &&
+                    !modal.classList.contains("hidden") &&
+                    event.target === modal
+                ) {
+
+                    closePDFOptions();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    closePDFOptions();
+
+                }
+
+            }
+        );
+
+
+        // ============================================================
+        // LOAD ENGINEERS
+        // ============================================================
+
+        async function loadEngineers() {
+
+            const select =
+                document.getElementById(
+                    "assignedEngineerInput"
+                );
+
+            try {
+
+                const response =
+                    await fetch("/api/staff");
+
+                const data =
+                    await response.json();
+
+                let staffList = [];
+
+                if (Array.isArray(data)) {
+
+                    staffList = data;
+
+                } else if (
+                    Array.isArray(data.staff)
+                ) {
+
+                    staffList = data.staff;
+
+                }
+
+
+                select.innerHTML = `
+                    <option value="">
+                        Select Engineer
+                    </option>
+                `;
+
+
+                staffList.forEach(
+                    staff => {
+
+                        const name =
+                            staff.Name ||
+                            staff.name ||
+                            "";
+
+                        if (!name) return;
+
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value = name;
+                        option.textContent = name;
+
+                        select.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                if (
+                    currentTicket &&
+                    currentTicket["Assigned Engineer"]
+                ) {
+
+                    select.value =
+                        currentTicket[
+                            "Assigned Engineer"
+                        ];
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load engineers:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // LOAD TICKET
+        // ============================================================
+
+        async function loadTicket() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to load ticket."
+                    );
+
+                }
+
+
+                currentTicket =
+                    data.ticket;
+
+
+                displayTicket(
+                    currentTicket
+                );
+
+
+                await loadEngineers();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Failed to load ticket: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // DISPLAY TICKET
+        // ============================================================
+
+        function displayTicket(ticket) {
+
+            const ticketId =
+                ticket["Ticket ID"] ||
+                ticket.ticketId ||
+                "-";
+
+
+            const customerName =
+                ticket["Customer Name"] ||
+                "-";
+
+
+            const email =
+                ticket["Email"] ||
+                "-";
+
+
+            const status =
+                ticket["Status"] ||
+                "Open";
+
+
+            const supportType =
+                ticket["Support Type"] ||
+                "-";
+
+
+            document.getElementById(
+                "ticketTitle"
+            ).textContent =
+                ticketId;
+
+
+            document.getElementById(
+                "ticketStatusBadge"
+            ).textContent =
+                status;
+
+
+            document.getElementById(
+                "supportTypeBadge"
+            ).textContent =
+                supportType;
+
+
+            document.getElementById(
+                "customerId"
+            ).textContent =
+                ticket["Customer ID"] ||
+                "-";
+
+
+            document.getElementById(
+                "customerName"
+            ).textContent =
+                customerName;
+
+
+            document.getElementById(
+                "email"
+            ).textContent =
+                email;
+
+
+            document.getElementById(
+                "ticketId"
+            ).textContent =
+                ticketId;
+
+
+            document.getElementById(
+                "supportType"
+            ).textContent =
+                supportType;
+
+            document.getElementById(
+    "ticketPriority"
+).textContent =
+    ticket["Priority"] ||
+    "Medium";
+            document.getElementById(
+                "assignedEngineer"
+            ).textContent =
+                ticket["Assigned Engineer"] ||
+                "Unassigned";
+
+
+            document.getElementById(
+                "ticketStatusDisplay"
+            ).textContent =
+                status;
+
+
+            document.getElementById(
+                "createdDate"
+            ).textContent =
+                formatDate(
+                    ticket["Created Date"]
+                );
+
+
+            document.getElementById(
+                    "issue"
+            ).textContent =
+                    ticket["Issue"] ||
+            "No issue description provided.";
+
+            loadRelatedKnowledgeArticles(
+                    ticket["Issue"] || ""
+            );
+
+            // APPOINTMENT VISIBILITY
+            const appointmentInfoSection =
+                document.getElementById(
+                    "appointmentInfoSection"
+                );
+
+
+            const appointmentEditSection =
+                document.getElementById(
+                    "appointmentEditSection"
+                );
+
+
+            const employeeWorkSessionSection =
+                document.getElementById(
+                    "employeeWorkSessionSection"
+                );
+
+
+            const hasAppointment =
+                supportType === "Remote Support" ||
+                supportType === "On-site Support";
+
+
+            if (hasAppointment) {
+
+                appointmentInfoSection.style.display =
+                    "block";
+
+                appointmentEditSection.style.display =
+                    "block";
+
+                employeeWorkSessionSection.style.display =
+                    "block";
+
+            } else {
+
+                appointmentInfoSection.style.display =
+                    "none";
+
+                appointmentEditSection.style.display =
+                    "none";
+
+                employeeWorkSessionSection.style.display =
+                    "none";
+
+            }
+
+
+            // ========================================================
+            // APPOINTMENT INFORMATION
+            // ========================================================
+
+            document.getElementById(
+                "appointmentDate"
+            ).textContent =
+                ticket["Appointment Date"] ||
+                "-";
+
+
+            document.getElementById(
+                "appointmentTime"
+            ).textContent =
+                formatAppointmentTime(
+                    ticket["Appointment Time"]
+                );
+
+
+            const onsiteWorkType =
+    ticket["On-site Work Type"] || "";
+            const appointmentDurationLabel =
+    document.getElementById(
+        "appointmentDurationLabel"
+    );
+
+if (appointmentDurationLabel) {
+
+    if (onsiteWorkType === "Project") {
+
+        appointmentDurationLabel.textContent =
+            "Appointment Duration (Days)";
+
+    } else {
+
+        appointmentDurationLabel.textContent =
+            "Appointment Duration (Hours)";
+
+    }
+}
+const storedAppointmentDuration =
+    Number(ticket["Appointment Duration"]);
+
+let displayAppointmentDuration = "-";
+
+if (
+    onsiteWorkType === "Project" &&
+    Number.isFinite(storedAppointmentDuration)
+) {
+
+    const projectDays =
+        storedAppointmentDuration / 8;
+
+    displayAppointmentDuration =
+        `${projectDays} day${projectDays === 1 ? "" : "s"}`;
+
+} else if (
+    Number.isFinite(storedAppointmentDuration)
+) {
+
+    displayAppointmentDuration =
+        `${storedAppointmentDuration} hour${storedAppointmentDuration === 1 ? "" : "s"}`;
+
+}
+
+document.getElementById(
+    "appointmentDurationDisplay"
+).textContent =
+    displayAppointmentDuration;
+
+            document.getElementById(
+                "appointmentStatusDisplay"
+            ).textContent =
+                ticket["Appointment Status"] ||
+                "-";
+
+            // APPOINTMENT EDIT FORM
+
+let editableAppointmentDuration =
+    ticket["Appointment Duration"] || "";
+
+if (
+    onsiteWorkType === "Project" &&
+    editableAppointmentDuration !== ""
+) {
+
+    editableAppointmentDuration =
+        Number(editableAppointmentDuration) / 8;
+
+}
+
+document.getElementById(
+    "appointmentDurationInput"
+).value =
+    editableAppointmentDuration;
+
+
+            updateAppointmentActions(
+                ticket["Appointment Status"] ||
+                "Pending"
+            );
+
+
+            // ========================================================
+            // EMPLOYEE WORK SESSION
+            // ========================================================
+
+            const signIn =
+                ticket["Employee Sign In"] ||
+                "";
+
+
+            const signOut =
+                ticket["Employee Sign Out"] ||
+                "";
+
+
+            document.getElementById(
+                "employeeSignInTime"
+            ).textContent =
+                signIn
+                    ? formatSingaporeDateTime(signIn)
+                    : "-";
+
+
+            document.getElementById(
+                "employeeSignOutTime"
+            ).textContent =
+                signOut
+                    ? formatSingaporeDateTime(signOut)
+                    : "-";
+
+
+            const storedDuration =
+                ticket["Work Duration"];
+
+
+            if (
+                storedDuration !== undefined &&
+                storedDuration !== null &&
+                storedDuration !== ""
+            ) {
+
+                const numericDuration =
+                    Number(storedDuration);
+
+
+                if (!isNaN(numericDuration)) {
+
+                    document.getElementById(
+                        "employeeWorkDuration"
+                    ).textContent =
+                        `${numericDuration.toFixed(1)} hours`;
+
+                } else {
+
+                    document.getElementById(
+                        "employeeWorkDuration"
+                    ).textContent =
+                        storedDuration;
+
+                }
+
+            } else if (
+                signIn &&
+                signOut
+            ) {
+
+                document.getElementById(
+                    "employeeWorkDuration"
+                ).textContent =
+                    formatWorkDuration(
+                        signIn,
+                        signOut
+                    );
+
+            } else {
+
+                document.getElementById(
+                    "employeeWorkDuration"
+                ).textContent =
+                    "0.0 hours";
+
+            }
+
+
+            // ========================================================
+            // SERVICE RESULT
+            // ========================================================
+
+            const serviceResult =
+                ticket["Service Result"] ||
+                "";
+
+
+            document.getElementById(
+                "serviceResultDisplay"
+            ).textContent =
+                serviceResult.trim()
+                    ? serviceResult
+                    : "No service result recorded";
+
+
+            document.getElementById(
+                "serviceResultInput"
+            ).value =
+                serviceResult;
+
+
+            // ========================================================
+            // FORM VALUES
+            // ========================================================
+
+            document.getElementById(
+                "statusInput"
+            ).value =
+                status;
+
+        }
+
+
+        // ============================================================
+        // APPOINTMENT ACTION BUTTONS
+        // ============================================================
+
+        function updateAppointmentActions(status) {
+
+            const statusElement =
+                document.getElementById(
+                    "appointmentStatusInput"
+                );
+
+
+            const confirmButton =
+                document.getElementById(
+                    "confirmAppointmentButton"
+                );
+
+
+            const requestButton =
+                document.getElementById(
+                    "requestRescheduleButton"
+                );
+
+
+            const rescheduleButton =
+                document.getElementById(
+                    "rescheduleAppointmentButton"
+                );
+
+
+            if (!statusElement) return;
+
+
+            confirmButton.classList.add("hidden");
+            requestButton.classList.add("hidden");
+            rescheduleButton.classList.add("hidden");
+
+
+            statusElement.classList.remove(
+                "appointment-status-pending",
+                "appointment-status-confirmed",
+                "appointment-status-reschedule"
+            );
+
+
+            if (status === "Pending") {
+
+                statusElement.textContent =
+                    "Pending";
+
+                statusElement.classList.add(
+                    "appointment-status-pending"
+                );
+
+                confirmButton.classList.remove(
+                    "hidden"
+                );
+
+            } else if (status === "Confirmed") {
+
+                statusElement.textContent =
+                    "Confirmed";
+
+                statusElement.classList.add(
+                    "appointment-status-confirmed"
+                );
+
+                requestButton.classList.remove(
+                    "hidden"
+                );
+
+            } else if (
+                status === "Reschedule Required"
+            ) {
+
+                statusElement.textContent =
+                    "Reschedule Required";
+
+                statusElement.classList.add(
+                    "appointment-status-reschedule"
+                );
+
+                rescheduleButton.classList.remove(
+                    "hidden"
+                );
+
+            } else {
+
+                statusElement.textContent =
+                    status ||
+                    "Pending";
+
+                confirmButton.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // CONFIRM APPOINTMENT
+        // ============================================================
+
+        async function confirmAppointment() {
+
+            const confirmed =
+                confirm(
+                    "Confirm this appointment?\n\n" +
+                    "The system will check the engineer's Google Calendar."
+                );
+
+
+            if (!confirmed) return;
+
+
+            await updateAppointmentStatus(
+                "Confirmed"
+            );
+
+        }
+
+
+        // ============================================================
+        // REQUEST RESCHEDULE
+        // ============================================================
+
+        async function requestReschedule() {
+
+            const confirmed =
+                confirm(
+                    "Mark this appointment as requiring rescheduling?\n\n" +
+                    "The current appointment date and time will remain unchanged."
+                );
+
+
+            if (!confirmed) return;
+
+
+            await updateAppointmentStatus(
+                "Reschedule Required"
+            );
+
+        }
+
+
+        // ============================================================
+// RESCHEDULE APPOINTMENT
+// ============================================================
+async function rescheduleAppointment() {
+
+    if (!currentTicket) {
+
+        alert(
+            "Ticket information has not loaded yet."
+        );
+
+        return;
+    }
+
+
+    const currentStatus =
+        currentTicket["Appointment Status"] || "";
+
+
+    if (
+        currentStatus !==
+        "Reschedule Required"
+    ) {
+
+        alert(
+            "This appointment is not currently marked as Reschedule Required."
+        );
+
+        return;
+    }
+
+
+    const modal =
+        document.getElementById(
+            "rescheduleModal"
+        );
+
+
+    const dateInput =
+        document.getElementById(
+            "rescheduleDateInput"
+        );
+
+
+    const timeInput =
+        document.getElementById(
+            "rescheduleTimeInput"
+        );
+
+
+    const durationInput =
+        document.getElementById(
+            "rescheduleDurationInput"
+        );
+
+
+    const engineerInput =
+        document.getElementById(
+            "rescheduleEngineerInput"
+        );
+
+
+    // ============================================================
+    // GET ON-SITE WORK TYPE
+    // ============================================================
+
+    const onsiteWorkType =
+        currentTicket["On-site Work Type"] || "";
+
+
+    // ============================================================
+    // CHANGE DURATION LABEL
+    // ============================================================
+
+    const durationLabel =
+        document.getElementById(
+            "rescheduleDurationLabel"
+        );
+
+
+    if (durationLabel) {
+
+        if (
+            onsiteWorkType === "Project"
+        ) {
+
+            durationLabel.textContent =
+                "Appointment Duration (Days)";
+
+        } else {
+
+            durationLabel.textContent =
+                "Appointment Duration (Hours)";
+
+        }
+
+    }
+
+
+    // ============================================================
+    // LOAD ENGINEERS
+    // ============================================================
+
+    await loadRescheduleEngineers();
+
+
+    // ============================================================
+    // FILL CURRENT APPOINTMENT INFORMATION
+    // ============================================================
+
+    dateInput.value =
+        currentTicket["Appointment Date"] || "";
+
+
+    timeInput.value =
+        normalizeAppointmentTime(
+            currentTicket["Appointment Time"] || ""
+        );
+
+
+    // ============================================================
+    // LOAD DURATION
+    // ============================================================
+
+    let rescheduleDuration =
+        currentTicket["Appointment Duration"] || "";
+
+
+    // Excel stores Project duration as HOURS.
+    // The reschedule form displays Project duration as DAYS.
+
+    if (
+        onsiteWorkType === "Project" &&
+        currentTicket["Appointment Duration"] !== "" &&
+        currentTicket["Appointment Duration"] !== undefined &&
+        currentTicket["Appointment Duration"] !== null
+    ) {
+
+        rescheduleDuration =
+            Number(
+                currentTicket["Appointment Duration"]
+            ) / 8;
+
+    }
+
+
+    durationInput.value =
+        rescheduleDuration;
+
+
+    // ============================================================
+    // LOAD ENGINEER
+    // ============================================================
+
+    engineerInput.value =
+        currentTicket["Assigned Engineer"] || "";
+
+
+    // ============================================================
+    // DO NOT ALLOW PAST DATES
+    // ============================================================
+
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    dateInput.min =
+        today;
+
+
+    // ============================================================
+    // SHOW MODAL
+    // ============================================================
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+}
+// ============================================================
+// CLOSE RESCHEDULE MODAL
+// ============================================================
+
+function closeRescheduleModal() {
+
+    const modal =
+        document.getElementById(
+            "rescheduleModal"
+        );
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+}
+
+async function loadRescheduleEngineers() {
+
+    const select =
+        document.getElementById(
+            "rescheduleEngineerInput"
+        );
+
+    if (!select) return;
+
+    try {
+
+        const response =
+            await fetch("/api/staff");
+
+        const data =
+            await response.json();
+
+        let staffList = [];
+
+        if (Array.isArray(data)) {
+
+            staffList = data;
+
+        } else if (
+            Array.isArray(data.staff)
+        ) {
+
+            staffList = data.staff;
+
+        }
+
+        select.innerHTML = `
+            <option value="">
+                Select Engineer
+            </option>
+        `;
+
+        staffList.forEach(staff => {
+
+            const name =
+                staff.Name ||
+                staff.name ||
+                "";
+
+            if (!name) return;
+
+            const option =
+                document.createElement("option");
+
+            option.value = name;
+            option.textContent = name;
+
+            select.appendChild(option);
+
+        });
+
+        if (
+            currentTicket &&
+            currentTicket["Assigned Engineer"]
+        ) {
+
+            select.value =
+                currentTicket[
+                    "Assigned Engineer"
+                ];
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load reschedule engineers:",
+            error
+        );
+
+    }
+}
+
+// SUBMIT RESCHEDULE
+async function submitReschedule() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const ticketId =
+        params.get("id");
+
+
+    if (!ticketId) {
+
+        alert(
+            "Ticket ID not found."
+        );
+
+        return;
+    }
+
+
+    // ========================================================
+    // GET INPUTS
+    // ========================================================
+
+    const engineerInput =
+        document.getElementById(
+            "rescheduleEngineerInput"
+        );
+
+
+    const dateInput =
+        document.getElementById(
+            "rescheduleDateInput"
+        );
+
+
+    const timeInput =
+        document.getElementById(
+            "rescheduleTimeInput"
+        );
+
+
+    const durationInput =
+        document.getElementById(
+            "rescheduleDurationInput"
+        );
+
+
+    const assignedEngineer =
+        engineerInput.value;
+
+
+    const appointmentDate =
+        dateInput.value;
+
+
+    const appointmentTime =
+        timeInput.value;
+
+
+    const appointmentDuration =
+        Number(
+            durationInput.value
+        );
+
+
+    // ========================================================
+    // VALIDATE ENGINEER
+    // ========================================================
+
+    if (!assignedEngineer) {
+
+        alert(
+            "Please select an engineer."
+        );
+
+        return;
+    }
+
+
+    // ========================================================
+    // VALIDATE DATE
+    // ========================================================
+
+    if (!appointmentDate) {
+
+        alert(
+            "Please select a new appointment date."
+        );
+
+        return;
+    }
+
+
+    // ========================================================
+    // VALIDATE TIME
+    // ========================================================
+
+    if (!appointmentTime) {
+
+        alert(
+            "Please select a new appointment time."
+        );
+
+        return;
+    }
+
+
+    
+
+
+   // ========================================================
+// GET SUPPORT TYPE + WORK TYPE
+// ========================================================
+const supportType =
+    currentTicket
+        ? String(
+            currentTicket["Support Type"] || ""
+        ).trim()
+        : "";
+
+const onsiteWorkType =
+    currentTicket
+        ? String(
+            currentTicket["On-site Work Type"] || ""
+        ).trim()
+        : "";
+const durationLabel =
+    document.getElementById(
+        "rescheduleDurationLabel"
+    );
+
+if (durationLabel) {
+
+    if (onsiteWorkType === "Project") {
+
+        durationLabel.textContent =
+            "Appointment Duration (Days)";
+
+    } else {
+
+        durationLabel.textContent =
+            "Appointment Duration (Hours)";
+
+    }
+}
+const isOnSiteSupport =
+    supportType.toLowerCase() ===
+        "on-site support" ||
+    supportType.toLowerCase() ===
+        "on site support";
+
+
+// ========================================================
+// VALIDATE DURATION
+// ========================================================
+
+if (
+    !Number.isFinite(
+        appointmentDuration
+    ) ||
+    appointmentDuration <= 0
+) {
+
+    alert(
+        "Please enter a valid appointment duration."
+    );
+
+    return;
+}
+
+
+// ========================================================
+// ON-SITE DURATION RULES
+// ========================================================
+
+if (
+    supportType === "On-site Support"
+) {
+
+    // --------------------------------------------
+    // AD HOC
+    // --------------------------------------------
+
+    if (
+        onsiteWorkType === "Ad Hoc"
+    ) {
+
+        if (
+            appointmentDuration < 2 ||
+            appointmentDuration % 0.5 !== 0
+        ) {
+
+            alert(
+                "Ad Hoc work requires at least 2 hours and must use 0.5 hour increments."
+            );
+
+            return;
+        }
+
+    }
+
+
+    // --------------------------------------------
+    // MAINTENANCE
+    // --------------------------------------------
+
+    else if (
+        onsiteWorkType === "Maintenance"
+    ) {
+
+        if (
+            appointmentDuration < 1 ||
+            appointmentDuration % 0.5 !== 0
+        ) {
+
+            alert(
+                "Maintenance work requires at least 1 hour and must use 0.5 hour increments."
+            );
+
+            return;
+        }
+
+    }
+
+
+    // --------------------------------------------
+    // PROJECT
+    // --------------------------------------------
+
+    else if (
+        onsiteWorkType === "Project"
+    ) {
+
+        if (
+            !Number.isInteger(
+                appointmentDuration
+            ) ||
+            appointmentDuration < 1
+        ) {
+
+            alert(
+                "Project duration must be at least 1 whole day."
+            );
+
+            return;
+        }
+
+    }
+
+}
+
+    // ========================================================
+    // CONFIRM
+    // ========================================================
+
+    const confirmed =
+        confirm(
+
+            "Reschedule this appointment?\n\n" +
+
+            `Engineer: ${assignedEngineer}\n` +
+
+            `New date: ${appointmentDate}\n` +
+
+            `New time: ${formatAppointmentTime(
+                appointmentTime
+            )}\n` +
+
+            `Duration: ${
+    onsiteWorkType === "Project"
+        ? `${appointmentDuration} day(s)`
+        : `${appointmentDuration} hour(s)`
+}\n\n` +
+
+            "The system will check the selected engineer's Google Calendar before making the change."
+
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    // ========================================================
+    // BUTTON
+    // ========================================================
+
+    const button =
+        document.querySelector(
+            ".reschedule-submit-button"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Checking...";
+
+
+    try {
+
+        // ====================================================
+        // SEND REQUEST TO SERVER
+        // ====================================================
+
+        const response =
+            await fetch(
+
+                `/api/tickets/${encodeURIComponent(
+                    ticketId
+                )}/reschedule`,
+
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+    JSON.stringify({
+
+        assignedEngineer:
+            assignedEngineer,
+
+        appointmentDate:
+            appointmentDate,
+
+        appointmentTime:
+            appointmentTime,
+
+        appointmentDuration:
+            appointmentDuration,
+
+        onsiteWorkType:
+            supportType === "On-site Support"
+                ? onsiteWorkType
+                : ""
+
+    })
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // ====================================================
+        // ENGINEER BUSY
+        // ====================================================
+
+        if (
+            response.status ===
+            409
+        ) {
+
+            let message =
+                data.message ||
+                "The selected engineer is not available at the selected time.";
+
+
+            if (
+                Array.isArray(
+                    data.busyPeriods
+                ) &&
+                data.busyPeriods.length > 0
+            ) {
+
+                message +=
+                    "\n\nThe selected slot conflicts with an existing calendar event.";
+
+            }
+
+
+            alert(
+                message
+            );
+
+
+            return;
+
+        }
+
+
+        // ====================================================
+        // OTHER ERROR
+        // ====================================================
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+
+                data.message ||
+                "Failed to reschedule appointment."
+
+            );
+
+        }
+
+
+        // ====================================================
+        // SUCCESS
+        // ====================================================
+
+        closeRescheduleModal();
+
+
+        alert(
+
+            "Appointment rescheduled successfully.\n\n" +
+
+            `Engineer: ${assignedEngineer}\n` +
+
+            "The Google Calendar event and ticket have been updated, " +
+
+            "and the appointment is now Confirmed."
+
+        );
+
+
+        // Reload ticket information
+        await loadTicket();
+
+
+    } catch (error) {
+
+        console.error(
+            "Reschedule error:",
+            error
+        );
+
+
+        alert(
+
+            error.message ||
+            "Could not reschedule the appointment."
+
+        );
+
+
+    } finally {
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "Check & Reschedule";
+
+    }
+
+}
+
+
+
+// UPDATE APPOINTMENT STATUS
+
+        async function updateAppointmentStatus(
+            newAppointmentStatus
+        ) {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            const assignedEngineer =
+                document.getElementById(
+                    "assignedEngineerInput"
+                ).value || "";
+
+
+            const status =
+                document.getElementById(
+                    "statusInput"
+                ).value || "Open";
+
+
+            const durationValue =
+                document.getElementById(
+                    "appointmentDurationInput"
+                ).value;
+
+
+            const onsiteWorkType =
+    currentTicket
+        ? String(
+            currentTicket["On-site Work Type"] || ""
+          ).trim()
+        : "";
+
+let appointmentDuration =
+    durationValue !== ""
+        ? Number(durationValue)
+        : "";
+
+
+// Project duration is entered/displayed in DAYS.
+// Convert days to HOURS before sending to the server.
+
+if (
+    onsiteWorkType === "Project" &&
+    appointmentDuration !== ""
+) {
+
+    appointmentDuration =
+        appointmentDuration * 8;
+
+}
+
+
+            const serviceResult =
+                document.getElementById(
+                    "serviceResultInput"
+                ).value || "";
+
+
+            const supportType =
+                currentTicket
+                    ? currentTicket["Support Type"]
+                    : "";
+
+
+            // --------------------------------------------------------
+            // ENGINEER REQUIRED FOR CONFIRMATION
+            // --------------------------------------------------------
+
+            if (
+                newAppointmentStatus === "Confirmed" &&
+                !assignedEngineer
+            ) {
+
+                alert(
+                    "Please assign an engineer before confirming the appointment."
+                );
+
+                return;
+
+            }
+
+
+            // --------------------------------------------------------
+            // DURATION VALIDATION
+            // --------------------------------------------------------
+
+            if (
+                (
+                    supportType === "Remote Support" ||
+                    supportType === "On-site Support"
+                ) &&
+                (
+                    appointmentDuration === "" ||
+                    isNaN(appointmentDuration) ||
+                    appointmentDuration <= 0 ||
+                    appointmentDuration % 0.5 !== 0
+                )
+            ) {
+
+                alert(
+                    "Please enter a valid appointment duration using 0.5 hour increments."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                supportType === "On-site Support" &&
+                appointmentDuration < 2
+            ) {
+
+                alert(
+                    "On-site Support requires an appointment duration of at least 2 hours."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+    assignedEngineer,
+
+    status,
+
+    appointmentDuration,
+
+    onsiteWorkType:
+        supportType === "On-site Support"
+            ? (
+                currentTicket["On-site Work Type"] ||
+                ""
+            )
+            : "",
+
+    appointmentStatus:
+        newAppointmentStatus,
+
+    serviceResult
+
+})
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.status === 409) {
+
+                    alert(
+                        "Engineer is NOT available at this appointment time.\n\n" +
+                        "Please choose another appointment time."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to update appointment."
+                    );
+
+                }
+
+
+                if (
+                    newAppointmentStatus ===
+                    "Confirmed"
+                ) {
+
+                    alert(
+                        "Appointment confirmed successfully."
+                    );
+
+                } else if (
+                    newAppointmentStatus ===
+                    "Reschedule Required"
+                ) {
+
+                    alert(
+                        "Appointment marked as Reschedule Required."
+                    );
+
+                }
+
+
+                await loadTicket();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Appointment status error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to update appointment: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // SAVE CHANGES
+        // ============================================================
+
+        async function saveChanges() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            const assignedEngineer =
+                document.getElementById(
+                    "assignedEngineerInput"
+                ).value || "";
+
+
+            const status =
+                document.getElementById(
+                    "statusInput"
+                ).value || "Open";
+
+
+            const durationValue =
+                document.getElementById(
+                    "appointmentDurationInput"
+                ).value;
+
+
+            const appointmentDuration =
+                durationValue !== ""
+                    ? Number(durationValue)
+                    : "";
+
+
+            /*
+             * appointmentStatusInput is now a SPAN,
+             * so we use currentTicket instead of .value.
+             */
+
+            const appointmentStatus =
+                currentTicket
+                    ? (
+                        currentTicket[
+                            "Appointment Status"
+                        ] ||
+                        "Pending"
+                    )
+                    : "Pending";
+
+
+            const serviceResult =
+                document.getElementById(
+                    "serviceResultInput"
+                ).value || "";
+
+
+            const supportType =
+                currentTicket
+                    ? currentTicket["Support Type"]
+                    : "";
+
+
+            // ========================================================
+            // ON-SITE DURATION VALIDATION
+            // ========================================================
+
+            if (
+                supportType === "On-site Support" &&
+                (
+                    appointmentDuration === "" ||
+                    isNaN(appointmentDuration) ||
+                    appointmentDuration < 2
+                )
+            ) {
+
+                alert(
+                    "On-site Support requires an appointment duration of at least 2 hours."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                          body: JSON.stringify({
+
+    assignedEngineer,
+
+    status,
+
+    appointmentDuration,
+
+    onsiteWorkType:
+        supportType === "On-site Support"
+            ? (
+                currentTicket["On-site Work Type"] ||
+                ""
+            )
+            : "",
+
+    appointmentStatus,
+
+    serviceResult
+
+})
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.status === 409) {
+
+                    alert(
+                        "Engineer is NOT available at this appointment time."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to save changes."
+                    );
+
+                }
+
+
+                alert(
+                    "Ticket changes saved successfully."
+                );
+
+
+                await loadTicket();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Save error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to save changes: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+        // BUILD SERVICE REPORT PDF
+        async function generatePDF() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return false;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to load ticket."
+                    );
+
+                }
+
+
+                const ticket =
+                    data.ticket;
+
+
+                const supportType =
+                    ticket["Support Type"] ||
+                    "";
+
+
+                const hasAppointment =
+                    supportType === "Remote Support" ||
+                    supportType === "On-site Support";
+
+
+                if (
+                    !window.jspdf ||
+                    !window.jspdf.jsPDF
+                ) {
+
+                    throw new Error(
+                        "PDF library failed to load. Please check your internet connection."
+                    );
+
+                }
+
+
+                const { jsPDF } =
+                    window.jspdf;
+
+
+                const doc =
+                    new jsPDF();
+
+
+                const pageWidth =
+                    doc.internal.pageSize.getWidth();
+
+
+                const pageHeight =
+                    doc.internal.pageSize.getHeight();
+
+
+                let y = 20;
+
+
+                function checkPageSpace(
+                    requiredSpace = 20
+                ) {
+
+                    if (
+                        y + requiredSpace >
+                        pageHeight - 20
+                    ) {
+
+                        doc.addPage();
+
+                        y = 20;
+
+                    }
+
+                }
+
+
+                function addSectionTitle(title) {
+
+                    checkPageSpace(20);
+
+                    doc.setFontSize(13);
+
+                    doc.setFont(
+                        "helvetica",
+                        "bold"
+                    );
+
+                    doc.text(
+                        title,
+                        15,
+                        y
+                    );
+
+                    y += 8;
+
+                }
+
+
+                function addField(
+                    label,
+                    value
+                ) {
+
+                    checkPageSpace(12);
+
+                    doc.setFontSize(10);
+
+                    doc.setFont(
+                        "helvetica",
+                        "bold"
+                    );
+
+                    doc.text(
+                        `${label}:`,
+                        15,
+                        y
+                    );
+
+                    doc.setFont(
+                        "helvetica",
+                        "normal"
+                    );
+
+
+                    const text =
+                        String(
+                            value !== undefined &&
+                            value !== null &&
+                            value !== ""
+                                ? value
+                                : "-"
+                        );
+
+
+                    const lines =
+                        doc.splitTextToSize(
+                            text,
+                            130
+                        );
+
+
+                    doc.text(
+                        lines,
+                        60,
+                        y
+                    );
+
+
+                    y +=
+                        Math.max(
+                            6,
+                            lines.length * 5
+                        );
+
+                }
+
+
+                function addTextSection(
+                    title,
+                    value
+                ) {
+
+                    addSectionTitle(title);
+
+
+                    const text =
+                        String(
+                            value !== undefined &&
+                            value !== null &&
+                            value !== ""
+                                ? value
+                                : "No information recorded."
+                        );
+
+
+                    doc.setFontSize(10);
+
+                    doc.setFont(
+                        "helvetica",
+                        "normal"
+                    );
+
+
+                    const lines =
+                        doc.splitTextToSize(
+                            text,
+                            180
+                        );
+
+
+                    checkPageSpace(
+                        Math.min(
+                            50,
+                            lines.length * 5 + 5
+                        )
+                    );
+
+
+                    doc.text(
+                        lines,
+                        15,
+                        y
+                    );
+
+
+                    y +=
+                        lines.length * 5 +
+                        10;
+
+                }
+
+
+                // ====================================================
+                // PDF HEADER
+                // ====================================================
+
+                doc.setFontSize(20);
+
+                doc.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                doc.text(
+                    "SERVICE REPORT",
+                    pageWidth / 2,
+                    y,
+                    {
+                        align: "center"
+                    }
+                );
+
+
+                y += 7;
+
+
+                doc.setFontSize(9);
+
+                doc.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                doc.text(
+                    "IT Support",
+                    pageWidth / 2,
+                    y,
+                    {
+                        align: "center"
+                    }
+                );
+
+
+                y += 15;
+
+
+                // ====================================================
+                // CUSTOMER INFORMATION
+                // ====================================================
+
+                addSectionTitle(
+                    "Customer Information"
+                );
+
+
+                addField(
+                    "Customer ID",
+                    ticket["Customer ID"]
+                );
+
+
+                addField(
+                    "Customer Name",
+                    ticket["Customer Name"]
+                );
+
+
+                addField(
+                    "Email",
+                    ticket["Email"]
+                );
+
+
+                y += 5;
+
+
+                // ====================================================
+                // TICKET INFORMATION
+                // ====================================================
+
+                addSectionTitle(
+                    "Ticket Information"
+                );
+
+
+                addField(
+                    "Ticket ID",
+                    ticket["Ticket ID"]
+                );
+
+
+                addField(
+                    "Support Type",
+                    ticket["Support Type"]
+                );
+
+
+                addField(
+                    "Assigned Engineer",
+                    ticket["Assigned Engineer"] ||
+                    "Unassigned"
+                );
+
+
+                addField(
+                    "Created Date",
+                    formatDate(
+                        ticket["Created Date"]
+                    )
+                );
+
+
+                addField(
+                    "Status",
+                    ticket["Status"]
+                );
+
+
+                y += 5;
+
+
+                // ====================================================
+                // ISSUE
+                // ====================================================
+
+                addTextSection(
+                    "Issue",
+                    ticket["Issue"]
+                );
+
+
+                // ====================================================
+                // APPOINTMENT
+                // ====================================================
+
+                if (hasAppointment) {
+
+                    addSectionTitle(
+                        "Appointment"
+                    );
+
+
+                    addField(
+                        "Appointment Date",
+                        ticket["Appointment Date"] ||
+                        "-"
+                    );
+
+
+                    addField(
+                        "Appointment Time",
+                        formatAppointmentTime(
+                            ticket["Appointment Time"]
+                        )
+                    );
+
+
+                    const appointmentDuration =
+                        ticket["Appointment Duration"];
+
+
+                    addField(
+                        "Duration",
+                        appointmentDuration !== undefined &&
+                        appointmentDuration !== null &&
+                        appointmentDuration !== ""
+                            ? `${appointmentDuration} hours`
+                            : "-"
+                    );
+
+
+                    addField(
+                        "Appointment Status",
+                        ticket["Appointment Status"] ||
+                        "-"
+                    );
+
+
+                    y += 5;
+
+
+                    // =================================================
+                    // EMPLOYEE WORK SESSION
+                    // =================================================
+
+                    addSectionTitle(
+                        "Employee Work Session"
+                    );
+
+
+                    addField(
+                        "Employee Sign In",
+                        ticket["Employee Sign In"]
+                            ? formatSingaporeDateTime(
+                                ticket["Employee Sign In"]
+                            )
+                            : "-"
+                    );
+
+
+                    addField(
+                        "Employee Sign Out",
+                        ticket["Employee Sign Out"]
+                            ? formatSingaporeDateTime(
+                                ticket["Employee Sign Out"]
+                            )
+                            : "-"
+                    );
+
+
+                    let workDuration =
+                        ticket["Work Duration"];
+
+
+                    if (
+                        workDuration !== undefined &&
+                        workDuration !== null &&
+                        workDuration !== ""
+                    ) {
+
+                        const numericDuration =
+                            Number(workDuration);
+
+
+                        if (
+                            !isNaN(
+                                numericDuration
+                            )
+                        ) {
+
+                            workDuration =
+                                `${numericDuration.toFixed(1)} hours`;
+
+                        }
+
+                    } else if (
+                        ticket["Employee Sign In"] &&
+                        ticket["Employee Sign Out"]
+                    ) {
+
+                        workDuration =
+                            formatWorkDuration(
+                                ticket["Employee Sign In"],
+                                ticket["Employee Sign Out"]
+                            );
+
+                    } else {
+
+                        workDuration =
+                            "0.0 hours";
+
+                    }
+
+
+                    addField(
+                        "Work Duration",
+                        workDuration
+                    );
+
+
+                    y += 5;
+
+                }
+
+
+                // ====================================================
+                // SERVICE RESULT
+                // ====================================================
+
+                addTextSection(
+                    "Service Result",
+                    ticket["Service Result"]
+                );
+
+
+                // ====================================================
+                // FOOTER
+                // ====================================================
+
+                const totalPages =
+                    doc.internal.getNumberOfPages();
+
+
+                for (
+                    let page = 1;
+                    page <= totalPages;
+                    page++
+                ) {
+
+                    doc.setPage(page);
+
+                    doc.setFontSize(8);
+
+                    doc.setFont(
+                        "helvetica",
+                        "normal"
+                    );
+
+                    doc.text(
+                        `IT Support Service Report - Page ${page} of ${totalPages}`,
+                        pageWidth / 2,
+                        pageHeight - 10,
+                        {
+                            align: "center"
+                        }
+                    );
+
+                }
+
+
+                generatedPDF =
+                    doc;
+
+
+                generatedPDFTicketId =
+                    ticketId;
+
+
+                return true;
+
+
+            } catch (error) {
+
+                console.error(
+                    "PDF generation error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to generate PDF: " +
+                    error.message
+                );
+
+
+                return false;
+
+            }
+
+        }
+
+
+        // ============================================================
+        // DOWNLOAD PDF
+        // ============================================================
+
+        async function handleDownloadPDF() {
+
+            closePDFOptions();
+
+
+            const success =
+                await generatePDF();
+
+
+            if (
+                !success ||
+                !generatedPDF ||
+                !generatedPDFTicketId
+            ) {
+
+                return;
+
+            }
+
+
+            generatedPDF.save(
+                `Service-Report-${generatedPDFTicketId}.pdf`
+            );
+
+        }
+
+
+        // ============================================================
+        // EMAIL PDF
+        // ============================================================
+
+        async function handleEmailPDF() {
+
+            closePDFOptions();
+
+
+            const success =
+                await generatePDF();
+
+
+            if (
+                !success ||
+                !generatedPDF ||
+                !generatedPDFTicketId
+            ) {
+
+                return;
+
+            }
+
+
+            await emailServiceReport();
+
+        }
+
+
+        // ============================================================
+        // EMAIL SERVICE REPORT
+        // ============================================================
+
+        async function emailServiceReport() {
+
+            if (!generatedPDF) {
+
+                alert(
+                    "Please generate the PDF first."
+                );
+
+                return;
+
+            }
+
+
+            if (!generatedPDFTicketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(generatedPDFTicketId)}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to load ticket."
+                    );
+
+                }
+
+
+                const ticket =
+                    data.ticket;
+
+
+                const customerEmail =
+                    String(
+                        ticket["Email"] ||
+                        ""
+                    ).trim();
+
+
+                if (!customerEmail) {
+
+                    alert(
+                        "This ticket does not have a customer email address."
+                    );
+
+                    return;
+
+                }
+
+
+                const confirmed =
+                    confirm(
+                        `Send the service report to:\n\n${customerEmail}\n\nTicket: ${generatedPDFTicketId}`
+                    );
+
+
+                if (!confirmed) {
+
+                    return;
+
+                }
+
+
+                const pdfDataUri =
+                    generatedPDF.output(
+                        "datauristring"
+                    );
+
+
+                const emailResponse =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(generatedPDFTicketId)}/email-report`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                pdfBase64:
+                                    pdfDataUri
+
+                            })
+                        }
+                    );
+
+
+                const emailData =
+                    await emailResponse.json();
+
+
+                if (
+                    !emailResponse.ok ||
+                    !emailData.success
+                ) {
+
+                    console.error(
+                        "Email error:",
+                        emailData
+                    );
+
+
+                    throw new Error(
+                        emailData.message ||
+                        "Failed to email service report."
+                    );
+
+                }
+
+
+                alert(
+                    `Service report sent successfully to ${emailData.email}`
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Email service report error:",
+                    error
+                );
+
+
+                alert(
+                    "Could not email the service report: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // EMPLOYEE SIGN IN
+        // ============================================================
+
+        async function employeeSignIn() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}/sign-in`,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to sign in."
+                    );
+
+                }
+
+
+                alert(
+                    "Employee signed in successfully."
+                );
+
+
+                await loadTicket();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Sign-in error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to sign in: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // EMPLOYEE SIGN OUT
+        // ============================================================
+
+        async function employeeSignOut() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}/sign-out`,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to sign out."
+                    );
+
+                }
+
+
+                const duration =
+                    Number(
+                        data.workDuration
+                    );
+
+
+                alert(
+                    `Employee signed out successfully.\n\nWork Duration: ${
+                        isNaN(duration)
+                            ? "0.0"
+                            : duration.toFixed(1)
+                    } hours`
+                );
+
+
+                await loadTicket();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Sign-out error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to sign out: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // DELETE TICKET
+        // ============================================================
+
+        async function deleteTicket() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const ticketId =
+                params.get("id");
+
+
+            if (!ticketId) {
+
+                alert(
+                    "Ticket ID not found."
+                );
+
+                return;
+
+            }
+
+
+            const confirmed =
+                confirm(
+                    `Are you sure you want to delete ticket ${ticketId}?`
+                );
+
+
+            if (!confirmed) return;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/tickets/${encodeURIComponent(ticketId)}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to delete ticket."
+                    );
+
+                }
+
+
+                alert(
+                    "Ticket deleted successfully."
+                );
+
+
+                window.location.href =
+                    "/Dashboard.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Delete error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to delete ticket: " +
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        // ============================================================
+        // FORMAT DATE
+        // ============================================================
+
+        function formatDate(value) {
+
+            if (!value) return "-";
+
+
+            const date =
+                new Date(value);
+
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return value;
+
+            }
+
+
+            return date.toLocaleString(
+                "en-SG",
+                {
+                    timeZone:
+                        "Asia/Singapore",
+
+                    day:
+                        "2-digit",
+
+                    month:
+                        "short",
+
+                    year:
+                        "numeric"
+                }
+            );
+
+        }
+
+
+        // ============================================================
+        // FORMAT SINGAPORE DATE + TIME
+        // ============================================================
+
+        function formatSingaporeDateTime(value) {
+
+            if (!value) return "-";
+
+
+            const date =
+                new Date(value);
+
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return value;
+
+            }
+
+
+            return date.toLocaleString(
+                "en-SG",
+                {
+                    timeZone:
+                        "Asia/Singapore",
+
+                    day:
+                        "numeric",
+
+                    month:
+                        "short",
+
+                    year:
+                        "numeric",
+
+                    hour:
+                        "numeric",
+
+                    minute:
+                        "2-digit",
+
+                    second:
+                        "2-digit",
+
+                    hour12:
+                        true
+                }
+            );
+
+        }
+
+
+        // ============================================================
+        // FORMAT WORK DURATION
+        // ============================================================
+
+        function formatWorkDuration(
+            signIn,
+            signOut
+        ) {
+
+            if (
+                !signIn ||
+                !signOut
+            ) {
+
+                return "0.0 hours";
+
+            }
+
+
+            const start =
+                new Date(signIn);
+
+
+            const end =
+                new Date(signOut);
+
+
+            if (
+                isNaN(start.getTime()) ||
+                isNaN(end.getTime())
+            ) {
+
+                return "0.0 hours";
+
+            }
+
+
+            const milliseconds =
+                end.getTime() -
+                start.getTime();
+
+
+            if (milliseconds < 0) {
+
+                return "0.0 hours";
+
+            }
+
+
+            const hours =
+                milliseconds /
+                (1000 * 60 * 60);
+
+
+            return `${hours.toFixed(1)} hours`;
+
+        }
+
+
+        // ============================================================
+        // FORMAT APPOINTMENT TIME
+        // ============================================================
+
+        function formatAppointmentTime(value) {
+
+            if (!value) return "-";
+
+
+            const normalized =
+                normalizeAppointmentTime(value);
+
+
+            const labels = {
+
+                "08:30":
+                    "8:30 AM",
+
+                "09:00":
+                    "9:00 AM",
+
+                "11:30":
+                    "11:30 AM",
+
+                "13:00":
+                    "1:00 PM",
+
+                "15:00":
+                    "3:00 PM",
+
+                "16:00":
+                    "4:00 PM"
+
+            };
+
+
+            return labels[normalized] ||
+                value;
+
+        }
+
+
+        // ============================================================
+        // NORMALIZE APPOINTMENT TIME
+        // ============================================================
+
+        function normalizeAppointmentTime(value) {
+
+            if (!value) return "";
+
+
+            let stringValue =
+                String(value)
+                    .trim()
+                    .replace(/\s+/g, " ")
+                    .toUpperCase();
+
+
+            const match =
+                stringValue.match(
+                    /^(\d{1,2}):(\d{2})\s*(AM|PM)?$/
+                );
+
+
+            if (!match) {
+
+                return stringValue;
+
+            }
+
+
+            let hour =
+                Number(
+                    match[1]
+                );
+
+
+            const minute =
+                match[2];
+
+
+            const period =
+                match[3];
+
+
+            if (
+                period === "PM" &&
+                hour < 12
+            ) {
+
+                hour += 12;
+
+            }
+
+
+            if (
+                period === "AM" &&
+                hour === 12
+            ) {
+
+                hour = 0;
+
+            }
+
+
+            return `${String(hour).padStart(2, "0")}:${minute}`;
+
+        }
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+// KNOWLEDGE BASE - LOAD RELATED ARTICLES
+
+async function loadRelatedKnowledgeArticles(issue) {
+
+    const results =
+        document.getElementById(
+            "knowledgeBaseResults"
+        );
+
+    const message =
+        document.getElementById(
+            "knowledgeBaseMessage"
+        );
+
+
+    if (!results || !message) {
+
+        console.error(
+            "Knowledge Base HTML elements not found."
+        );
+
+        return;
+    }
+
+
+    if (!issue) {
+
+        message.textContent =
+            "No issue information available.";
+
+        results.innerHTML = "";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Searching for relevant troubleshooting articles...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/knowledge-base"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                "Knowledge Base API returned success=false."
+            );
+
+        }
+
+
+        const articles =
+            data.articles || [];
+
+
+        // ====================================================
+        // GET ISSUE WORDS
+        // ====================================================
+
+        const issueWords =
+            String(issue)
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, "")
+                .split(/\s+/)
+                .filter(
+                    word =>
+                        word.length > 2
+                );
+
+
+        // ====================================================
+        // FIND MATCHING ARTICLES
+        // ====================================================
+
+        const matchedArticles =
+            articles.filter(article => {
+
+                const status =
+                    String(
+                        article.Status || ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+
+                if (
+                    status !== "published"
+                ) {
+
+                    return false;
+
+                }
+
+
+                const searchableText = (
+
+                    String(
+                        article.Title || ""
+                    ) + " " +
+
+                    String(
+                        article.Category || ""
+                    ) + " " +
+
+                    String(
+                        article.Problem || ""
+                    ) + " " +
+
+                    String(
+                        article.Solution || ""
+                    ) + " " +
+
+                    String(
+                        article.Resolution || ""
+                    )
+
+                ).toLowerCase();
+
+
+                return issueWords.some(
+                    word =>
+                        searchableText.includes(
+                            word
+                        )
+                );
+
+            });
+
+
+        // ====================================================
+        // CLEAR RESULTS
+        // ====================================================
+
+        results.innerHTML = "";
+
+
+        // ====================================================
+        // NO MATCHES
+        // ====================================================
+
+        if (
+            matchedArticles.length === 0
+        ) {
+
+            message.textContent =
+                "No related knowledge articles found.";
+
+            return;
+
+        }
+
+
+        // ====================================================
+        // MATCHES FOUND
+        // ====================================================
+
+        message.textContent =
+            `${matchedArticles.length} related article(s) found.`;
+
+
+        // ====================================================
+        // DISPLAY ARTICLES
+        // ====================================================
+
+        matchedArticles.forEach(
+            article => {
+
+                const articleDiv =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                articleDiv.className =
+                    "knowledge-article";
+
+
+                articleDiv.innerHTML = `
+
+                    <div>
+
+                        <span class="knowledge-category">
+
+                            ${escapeHtml(
+                                article.Category ||
+                                "General"
+                            )}
+
+                        </span>
+
+
+                        <h3>
+
+                            ${escapeHtml(
+                                article.Title ||
+                                "Untitled"
+                            )}
+
+                        </h3>
+
+
+                        <p>
+
+                            <strong>Problem:</strong><br>
+
+                            ${escapeHtml(
+                                article.Problem ||
+                                "No problem provided."
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Solution:</strong><br>
+
+                            ${escapeHtml(
+                                article.Solution ||
+                                "No solution provided."
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Resolution:</strong><br>
+
+                            ${escapeHtml(
+                                article.Resolution ||
+                                "No resolution provided."
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Author:</strong>
+
+                            ${escapeHtml(
+                                article.Author ||
+                                "Unknown"
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Created Date:</strong>
+
+                            ${formatKnowledgeDate(
+                                article["Created Date"]
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Updated Date:</strong>
+
+                            ${formatKnowledgeDate(
+                                article["Updated Date"]
+                            )}
+
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        onclick="viewKnowledgeArticle('${String(
+                            article["Article ID"] ||
+                            ""
+                        ).replace(
+                            /'/g,
+                            "\\'"
+                        )}')"
+                    >
+
+                        View Article
+
+                    </button>
+
+                `;
+
+
+                results.appendChild(
+                    articleDiv
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Knowledge Base error:",
+            error
+        );
+
+
+        message.textContent =
+            "Unable to load knowledge base.";
+
+    }
+
+}
+
+
+// ============================================================
+// FORMAT KNOWLEDGE BASE DATE
+// ============================================================
+
+function formatKnowledgeDate(
+    dateValue
+) {
+
+    if (!dateValue) {
+
+        return "Not available";
+
+    }
+
+
+    const date =
+        new Date(dateValue);
+
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return String(dateValue);
+
+    }
+
+
+    return date.toLocaleString(
+        "en-SG",
+        {
+            timeZone:
+                "Asia/Singapore",
+
+            dateStyle:
+                "medium",
+
+            timeStyle:
+                "short"
+        }
+    );
+
+}
+
+
+// ============================================================
+// VIEW KNOWLEDGE BASE ARTICLE
+// ============================================================
+
+function viewKnowledgeArticle(
+    articleId
+) {
+
+    if (!articleId) {
+
+        alert(
+            "Article ID not found."
+        );
+
+        return;
+
+    }
+
+
+    window.open(
+        `/Knowledge-Base.html?article=${encodeURIComponent(
+            articleId
+        )}`,
+        "_blank"
+    );
+
+}
+
+
+// ============================================================
+// INIT
+// ============================================================
+
+async function init() {
+
+    await loadTicket();
+
+}
+
+init();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Staff Profile - IT Support</title>
+
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+    body {
+        margin: 0;
+
+        font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Arial,
+            sans-serif;
+
+        background: #f4f7fb;
+
+        color: #172033;
+    }
+
+
+    /* =====================================================
+       SIDEBAR
+    ===================================================== */
+
+    .sidebar {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: 245px;
+
+        background: #ffffff;
+
+        border-right: 1px solid #e5e7eb;
+
+        display: flex;
+        flex-direction: column;
+
+        z-index: 100;
+    }
+
+
+    .brand {
+        height: 82px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 0 24px;
+
+        border-bottom: 1px solid #eef0f3;
+    }
+
+
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+
+        background: #1769aa;
+
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 19px;
+        font-weight: bold;
+
+        margin-right: 11px;
+    }
+
+
+    .brand-text h2 {
+        margin: 0;
+
+        font-size: 15px;
+
+        color: #172033;
+    }
+
+
+    .brand-text span {
+        display: block;
+
+        margin-top: 2px;
+
+        font-size: 11px;
+
+        color: #8a94a6;
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    .nav {
+        padding: 22px 13px;
+
+        flex: 1;
+    }
+
+
+    .nav-title {
+        padding: 0 12px 9px;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        color: #9aa3b2;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.8px;
+    }
+
+
+    .nav-item {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+
+        padding: 11px 13px;
+
+        margin-bottom: 4px;
+
+        border-radius: 8px;
+
+        text-decoration: none;
+
+        color: #687386;
+
+        font-size: 14px;
+
+        transition: 0.15s;
+    }
+
+
+    .nav-item:hover {
+        background: #f3f7fb;
+
+        color: #1769aa;
+    }
+
+
+    .nav-item.active {
+        background: #eaf3fb;
+
+        color: #1769aa;
+
+        font-weight: 600;
+    }
+
+
+    .nav-icon {
+        width: 25px;
+
+        font-size: 16px;
+
+        margin-right: 8px;
+
+        text-align: center;
+    }
+
+
+    /* =====================================================
+       SIDEBAR USER
+    ===================================================== */
+
+    .sidebar-user {
+        padding: 16px;
+
+        border-top: 1px solid #eef0f3;
+    }
+
+
+    .user-card {
+        display: flex;
+        align-items: center;
+
+        padding: 10px;
+
+        border-radius: 9px;
+
+        background: #f7f9fc;
+    }
+
+
+    .user-avatar-small {
+        width: 35px;
+        height: 35px;
+
+        border-radius: 50%;
+
+        background: #dbeafe;
+
+        color: #1769aa;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        margin-right: 9px;
+    }
+
+
+    .user-info {
+        min-width: 0;
+    }
+
+
+    .user-info strong {
+        display: block;
+
+        font-size: 12px;
+
+        color: #263246;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .user-info span {
+        display: block;
+
+        margin-top: 2px;
+
+        font-size: 10px;
+
+        color: #8a94a6;
+    }
+
+
+    /* =====================================================
+       MAIN
+    ===================================================== */
+
+    .main {
+        margin-left: 245px;
+
+        min-height: 100vh;
+
+        padding: 30px 34px;
+    }
+
+
+    /* =====================================================
+       PAGE HEADER
+    ===================================================== */
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+
+    .page-header h1 {
+        margin: 0;
+
+        font-size: 25px;
+
+        font-weight: 700;
+    }
+
+
+    .page-header p {
+        margin: 6px 0 0;
+
+        color: #8993a5;
+
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       PROFILE LAYOUT
+    ===================================================== */
+
+    .profile-grid {
+        display: grid;
+
+        grid-template-columns:
+            280px 1fr;
+
+        gap: 20px;
+
+        max-width: 1050px;
+    }
+
+
+    /* =====================================================
+       PROFILE CARD
+    ===================================================== */
+
+    .profile-card {
+        background: white;
+
+        border: 1px solid #e4e8ee;
+
+        border-radius: 11px;
+
+        padding: 28px;
+
+        text-align: center;
+
+        box-shadow:
+            0 2px 8px
+            rgba(15, 23, 42, 0.025);
+    }
+
+
+    .profile-avatar {
+        width: 92px;
+        height: 92px;
+
+        border-radius: 50%;
+
+        background: #eaf3fb;
+
+        color: #1769aa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin: 0 auto 18px;
+
+        font-size: 32px;
+
+        font-weight: 700;
+    }
+
+
+    .profile-name {
+        margin: 0;
+
+        font-size: 19px;
+
+        font-weight: 700;
+
+        color: #202b3c;
+    }
+
+
+    .profile-role {
+        margin-top: 6px;
+
+        color: #7b8494;
+
+        font-size: 12px;
+    }
+
+
+    .profile-status {
+        display: inline-flex;
+
+        align-items: center;
+
+        margin-top: 16px;
+
+        padding: 6px 11px;
+
+        border-radius: 20px;
+
+        background: #dcfce7;
+
+        color: #166534;
+
+        font-size: 10px;
+
+        font-weight: 600;
+    }
+
+
+    .profile-status::before {
+        content: "";
+
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: #16a34a;
+
+        margin-right: 6px;
+    }
+
+
+    /* =====================================================
+       INFORMATION CARD
+    ===================================================== */
+
+    .info-card {
+        background: white;
+
+        border: 1px solid #e4e8ee;
+
+        border-radius: 11px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 2px 8px
+            rgba(15, 23, 42, 0.025);
+    }
+
+
+    .card-header {
+        padding: 20px 23px;
+
+        border-bottom: 1px solid #eef0f3;
+    }
+
+
+    .card-header h2 {
+        margin: 0;
+
+        font-size: 16px;
+
+        color: #202b3c;
+    }
+
+
+    .card-header p {
+        margin: 4px 0 0;
+
+        font-size: 11px;
+
+        color: #929bab;
+    }
+
+
+    .information {
+        padding: 5px 23px 15px;
+    }
+
+
+    .info-row {
+        display: grid;
+
+        grid-template-columns: 180px 1fr;
+
+        align-items: center;
+
+        min-height: 63px;
+
+        border-bottom: 1px solid #f0f1f4;
+    }
+
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+
+    .info-label {
+        font-size: 11px;
+
+        color: #929bab;
+
+        font-weight: 600;
+    }
+
+
+    .info-value {
+        font-size: 13px;
+
+        color: #354052;
+
+        font-weight: 500;
+    }
+
+
+    .staff-id {
+        color: #1769aa;
+
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       DEPARTMENT / ROLE BADGES
+    ===================================================== */
+
+    .info-badge {
+        display: inline-block;
+
+        padding: 5px 9px;
+
+        border-radius: 5px;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        font-size: 10px;
+
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+       QUICK ACTIONS
+    ===================================================== */
+
+    .actions-card {
+        margin-top: 20px;
+
+        background: white;
+
+        border: 1px solid #e4e8ee;
+
+        border-radius: 11px;
+
+        padding: 20px 23px;
+
+        max-width: 1050px;
+    }
+
+
+    .actions-card h2 {
+        margin: 0 0 14px;
+
+        font-size: 15px;
+
+        color: #202b3c;
+    }
+
+
+    .action-buttons {
+        display: flex;
+
+        gap: 10px;
+
+        flex-wrap: wrap;
+    }
+
+
+    .action-button {
+        padding: 9px 14px;
+
+        border-radius: 6px;
+
+        border: 1px solid #dce1e8;
+
+        background: white;
+
+        color: #4b5563;
+
+        text-decoration: none;
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        transition: 0.15s;
+    }
+
+
+    .action-button:hover {
+        border-color: #1769aa;
+
+        color: #1769aa;
+
+        background: #f7fbff;
+    }
+
+
+    .action-button.primary {
+        background: #1769aa;
+
+        border-color: #1769aa;
+
+        color: white;
+    }
+
+
+    .action-button.primary:hover {
+        background: #12588e;
+
+        color: white;
+    }
+
+
+    /* =====================================================
+       ERROR / NOT LOGGED IN
+    ===================================================== */
+
+    .not-logged-in {
+        background: white;
+
+        border: 1px solid #e4e8ee;
+
+        border-radius: 11px;
+
+        padding: 45px;
+
+        text-align: center;
+
+        max-width: 650px;
+    }
+
+
+    .not-logged-in h2 {
+        margin: 0 0 8px;
+
+        font-size: 18px;
+    }
+
+
+    .not-logged-in p {
+        margin: 0 0 20px;
+
+        color: #8993a5;
+
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 850px) {
+
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 800px) {
+
+        .sidebar {
+            width: 70px;
+        }
+
+
+        .brand {
+            justify-content: center;
+
+            padding: 0;
+        }
+
+
+        .brand-text {
+            display: none;
+        }
+
+
+        .nav-title {
+            display: none;
+        }
+
+
+        .nav-item {
+            justify-content: center;
+
+            padding: 12px;
+        }
+
+
+        .nav-icon {
+            margin: 0;
+        }
+
+
+        .nav-item span:not(.nav-icon) {
+            display: none;
+        }
+
+
+        .sidebar-user {
+            padding: 8px;
+        }
+
+
+        .user-card {
+            justify-content: center;
+
+            padding: 8px;
+        }
+
+
+        .user-info {
+            display: none;
+        }
+
+
+        .main {
+            margin-left: 70px;
+
+            padding: 24px;
+        }
+
+    }
+
+
+    @media (max-width: 600px) {
+
+        .main {
+            padding: 18px;
+        }
+
+
+        .info-row {
+            grid-template-columns: 1fr;
+
+            padding: 13px 0;
+
+            gap: 5px;
+        }
+
+
+        .profile-card {
+            padding: 23px;
+        }
+
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            IT
+        </div>
+
+        <div class="brand-text">
+
+            <h2>
+                IT Support
+            </h2>
+
+            <span>
+                Ticket Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="nav">
+
+
+        <div class="nav-title">
+            Main Menu
+        </div>
+
+
+        <a
+            href="/Dashboard.html"
+            class="nav-item">
+
+            <span class="nav-icon">
+                ▦
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a
+            href="/ticket-form.html"
+            class="nav-item">
+
+            <span class="nav-icon">
+                ＋
+            </span>
+
+            <span>
+                Create Ticket
+            </span>
+
+        </a>
+
+
+        <a
+            href="/staff-profile.html"
+            class="nav-item active">
+
+            <span class="nav-icon">
+                ◉
+            </span>
+
+            <span>
+                Staff Profile
+            </span>
+
+        </a>
+
+
+        <div
+            class="nav-title"
+            style="margin-top: 25px;">
+
+            Account
+
+        </div>
+
+
+        <a
+            href="/"
+            class="nav-item">
+
+            <span class="nav-icon">
+                ↪
+            </span>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="sidebar-user">
+
+        <div class="user-card">
+
+            <div
+                class="user-avatar-small"
+                id="sidebarAvatar">
+
+                IT
+
+            </div>
+
+
+            <div class="user-info">
+
+                <strong id="sidebarName">
+                    IT Support Staff
+                </strong>
+
+                <span>
+                    Staff Account
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main">
+
+
+    <div class="page-header">
+
+        <h1>
+            Staff Profile
+        </h1>
+
+        <p>
+            View your staff account information
+        </p>
+
+    </div>
+
+
+    <div id="profileContent">
+
+        <!-- Profile will be loaded here -->
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(value) {
+
+        return String(value || "")
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // =====================================================
+    // GET INITIALS
+    // =====================================================
+
+    function getInitials(name) {
+
+        if (!name) {
+            return "IT";
+        }
+
+
+        const words =
+            name
+                .trim()
+                .split(/\s+/);
+
+
+        if (words.length === 1) {
+
+            return words[0]
+                .substring(0, 2)
+                .toUpperCase();
+
+        }
+
+
+        return (
+            words[0].charAt(0) +
+            words[words.length - 1].charAt(0)
+        ).toUpperCase();
+
+    }
+
+
+    // =====================================================
+    // LOAD STAFF PROFILE
+    // =====================================================
+
+    function loadStaffProfile() {
+
+
+        const profileContent =
+            document.getElementById(
+                "profileContent"
+            );
+
+
+        const storedStaff =
+            localStorage.getItem(
+                "staff"
+            );
+
+
+        if (!storedStaff) {
+
+
+            profileContent.innerHTML = `
+
+                <div class="not-logged-in">
+
+                    <h2>
+                        No Staff Account Found
+                    </h2>
+
+                    <p>
+                        Please log in as a staff member
+                        to view your profile.
+                    </p>
+
+                    <a
+                        href="/"
+                        class="action-button primary">
+
+                        Go to Staff Login
+
+                    </a>
+
+                </div>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        let staff;
+
+
+        try {
+
+            staff =
+                JSON.parse(
+                    storedStaff
+                );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Invalid staff login data:",
+                error
+            );
+
+
+            localStorage.removeItem(
+                "staff"
+            );
+
+
+            profileContent.innerHTML = `
+
+                <div class="not-logged-in">
+
+                    <h2>
+                        Session Error
+                    </h2>
+
+                    <p>
+                        Your staff login information
+                        could not be read.
+                    </p>
+
+                    <a
+                        href="/"
+                        class="action-button primary">
+
+                        Return to Login
+
+                    </a>
+
+                </div>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // SUPPORT DIFFERENT PROPERTY FORMATS
+        // =================================================
+
+        const staffId =
+            staff["Staff ID"] ||
+            staff.staffId ||
+            staff.id ||
+            "Not available";
+
+
+        const name =
+            staff["Name"] ||
+            staff.name ||
+            "Staff Member";
+
+
+        const email =
+            staff["Email"] ||
+            staff.email ||
+            "Not available";
+
+
+        const role =
+            staff["Role"] ||
+            staff.role ||
+            "Not specified";
+
+
+        const department =
+            staff["Department"] ||
+            staff.department ||
+            "Not specified";
+
+
+        const calendarId =
+            staff["Calendar ID"] ||
+            staff.calendarId ||
+            "Not assigned";
+
+
+        const initials =
+            getInitials(
+                name
+            );
+
+
+        // =================================================
+        // SIDEBAR
+        // =================================================
+
+        document.getElementById(
+            "sidebarAvatar"
+        ).textContent =
+            initials;
+
+
+        document.getElementById(
+            "sidebarName"
+        ).textContent =
+            name;
+
+
+        // =================================================
+        // PROFILE
+        // =================================================
+
+        profileContent.innerHTML = `
+
+            <div class="profile-grid">
+
+
+                <!-- PROFILE SUMMARY -->
+
+                <div class="profile-card">
+
+
+                    <div class="profile-avatar">
+
+                        ${escapeHTML(
+                            initials
+                        )}
+
+                    </div>
+
+
+                    <h2 class="profile-name">
+
+                        ${escapeHTML(
+                            name
+                        )}
+
+                    </h2>
+
+
+                    <div class="profile-role">
+
+                        ${escapeHTML(
+                            role
+                        )}
+
+                    </div>
+
+
+                    <div class="profile-status">
+
+                        Active Staff Account
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- INFORMATION -->
+
+                <div class="info-card">
+
+
+                    <div class="card-header">
+
+                        <h2>
+                            Staff Information
+                        </h2>
+
+                        <p>
+                            Your registered account details
+                        </p>
+
+                    </div>
+
+
+                    <div class="information">
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Staff ID
+                            </div>
+
+                            <div
+                                class="info-value staff-id">
+
+                                ${escapeHTML(
+                                    staffId
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Full Name
+                            </div>
+
+                            <div class="info-value">
+
+                                ${escapeHTML(
+                                    name
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Email Address
+                            </div>
+
+                            <div class="info-value">
+
+                                ${escapeHTML(
+                                    email
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Role
+                            </div>
+
+                            <div class="info-value">
+
+                                <span class="info-badge">
+
+                                    ${escapeHTML(
+                                        role
+                                    )}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Department
+                            </div>
+
+                            <div class="info-value">
+
+                                ${escapeHTML(
+                                    department
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Calendar ID
+                            </div>
+
+                            <div class="info-value">
+
+                                ${escapeHTML(
+                                    calendarId
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="actions-card">
+
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+
+                <div class="action-buttons">
+
+
+                    <a
+                        href="/Dashboard.html"
+                        class="action-button primary">
+
+                        View Dashboard
+
+                    </a>
+
+
+                    <a
+                        href="/ticket-form.html"
+                        class="action-button">
+
+                        Create Ticket
+
+                    </a>
+
+
+                    <button
+                        onclick="logout()"
+                        class="action-button">
+
+                        Logout
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "staff"
+        );
+
+        window.location.href = "/";
+
+    }
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    loadStaffProfile();
+
+
+</script>
+
+
+</body>
+
+</html>

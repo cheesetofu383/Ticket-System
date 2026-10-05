@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Ticket - IT Support</title>
+
+
+    <style>
+
+        /* ============================================================
+           GLOBAL
+        ============================================================ */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #f8fafc;
+
+            color: #0f172a;
+        }
+
+
+        /* ============================================================
+           SIDEBAR
+        ============================================================ */
+
+        .sidebar {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 245px;
+            height: 100vh;
+
+            background: #ffffff;
+
+            border-right: 1px solid #e5e7eb;
+
+            padding: 25px 18px;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 1000;
+        }
+
+
+        .brand {
+            padding: 5px 12px 25px;
+        }
+
+
+        .brand h1 {
+            margin: 0;
+
+            font-size: 21px;
+
+            font-weight: 700;
+
+            color: #0f172a;
+        }
+
+
+        .brand p {
+            margin: 5px 0 0;
+
+            font-size: 12px;
+
+            color: #64748b;
+        }
+
+
+        /* ============================================================
+           NAVIGATION
+        ============================================================ */
+
+        .nav {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 5px;
+        }
+
+
+        .nav a {
+            display: flex;
+
+            align-items: center;
+
+            padding: 12px 13px;
+
+            text-decoration: none;
+
+            color: #475569;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            border-radius: 8px;
+
+            transition: 0.2s;
+        }
+
+
+        .nav a:hover {
+            background: #f1f5f9;
+
+            color: #0f172a;
+        }
+
+
+        .nav a.active {
+            background: #eaf3fb;
+
+            color: #1769aa;
+        }
+
+
+        .nav-icon {
+            width: 25px;
+
+            font-size: 16px;
+
+            margin-right: 8px;
+        }
+
+
+        /* ============================================================
+           MAIN
+        ============================================================ */
+
+        .main {
+            margin-left: 245px;
+
+            min-height: 100vh;
+
+            padding: 35px 40px 50px;
+        }
+
+
+        .main-container {
+            max-width: 1100px;
+
+            margin: 0 auto;
+        }
+
+
+        /* ============================================================
+           PAGE HEADER
+        ============================================================ */
+
+        .page-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            margin-bottom: 30px;
+        }
+
+
+        .page-title h2 {
+            margin: 0;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            color: #0f172a;
+        }
+
+
+        .page-title p {
+            margin: 8px 0 0;
+
+            font-size: 15px;
+
+            color: #64748b;
+        }
+
+
+        .back-button {
+            background: #ffffff;
+
+            color: #1769aa;
+
+            border: 1px solid #cbd5e1;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+
+        .back-button:hover {
+            background: #f0f7ff;
+
+            border-color: #1769aa;
+        }
+
+
+        /* ============================================================
+           FORM CARD
+        ============================================================ */
+
+        .card {
+            background: #ffffff;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 12px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 2px 8px rgba(15, 23, 42, 0.04);
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ============================================================
+           SECTION HEADER
+        ============================================================ */
+
+        .section-header {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .section-number {
+            width: 32px;
+
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #eaf3fb;
+
+            color: #1769aa;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+
+        .section-header h3 {
+            margin: 0;
+
+            font-size: 18px;
+
+            color: #0f172a;
+        }
+
+
+        .section-header p {
+            margin: 3px 0 0;
+
+            font-size: 12px;
+
+            color: #64748b;
+        }
+
+
+        /* ============================================================
+           FORM GRID
+        ============================================================ */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 22px;
+        }
+
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+
+        label {
+            margin-bottom: 8px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #334155;
+        }
+
+
+        .required {
+            color: #dc2626;
+        }
+
+
+        /* ============================================================
+           INPUTS
+        ============================================================ */
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 8px;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 14px;
+
+            color: #0f172a;
+
+            background: #ffffff;
+
+            transition: 0.2s;
+        }
+
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+
+        input:hover,
+        select:hover,
+        textarea:hover {
+            border-color: #94a3b8;
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+
+            border-color: #1769aa;
+
+            box-shadow:
+                0 0 0 3px rgba(23, 105, 170, 0.08);
+        }
+
+
+        textarea {
+            min-height: 150px;
+
+            resize: vertical;
+
+            line-height: 1.5;
+        }
+
+
+        /* ============================================================
+           APPOINTMENT SECTION
+        ============================================================ */
+
+        #appointmentSection {
+            margin-top: 0;
+        }
+
+
+        .appointment-card {
+            background: #f8fbff;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 10px;
+
+            padding: 22px;
+        }
+
+
+        .appointment-info {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 10px;
+
+            background: #ffffff;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 8px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 20px;
+
+            color: #475569;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        .appointment-info-icon {
+            font-size: 15px;
+
+            color: #1769aa;
+
+            margin-top: 1px;
+        }
+
+
+        /* ============================================================
+           DISABLED APPOINTMENT OPTIONS
+        ============================================================ */
+
+        select option:disabled {
+            color: #9ca3af;
+
+            background: #f3f4f6;
+        }
+
+
+        /* ============================================================
+           BUTTONS
+        ============================================================ */
+
+        .buttons {
+            display: flex;
+
+            justify-content: flex-start;
+
+            gap: 10px;
+
+            margin-top: 5px;
+        }
+
+
+        .cancel-button {
+            background: #ffffff;
+
+            color: #475569;
+
+            border: 1px solid #cbd5e1;
+
+            padding: 12px 20px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+
+        .cancel-button:hover {
+            background: #f8fafc;
+
+            border-color: #94a3b8;
+        }
+
+
+        .submit-button {
+            background: #1769aa;
+
+            color: #ffffff;
+
+            border: none;
+
+            padding: 12px 22px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+
+        .submit-button:hover {
+            background: #12588e;
+        }
+
+
+        .submit-button:disabled {
+            background: #94a3af;
+
+            cursor: not-allowed;
+        }
+
+
+        /* ============================================================
+           MESSAGE
+        ============================================================ */
+
+        .message {
+            margin-top: 20px;
+
+            padding: 13px 15px;
+
+            border-radius: 8px;
+
+            display: none;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        .success {
+            background: #dcfce7;
+
+            color: #166534;
+
+            border: 1px solid #bbf7d0;
+        }
+
+
+        .error {
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            border: 1px solid #fecaca;
+        }
+
+
+        /* ============================================================
+           REQUIRED FIELD NOTE
+        ============================================================ */
+
+        .form-note {
+            margin-top: 20px;
+
+            font-size: 12px;
+
+            color: #64748b;
+        }
+
+
+        /* ============================================================
+           MOBILE
+        ============================================================ */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+
+            .main {
+                margin-left: 210px;
+
+                padding: 30px 25px;
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+
+                border-right: none;
+
+                border-bottom: 1px solid #e5e7eb;
+
+                padding: 15px;
+            }
+
+
+            .brand {
+                padding-bottom: 15px;
+            }
+
+
+            .nav {
+                flex-direction: row;
+
+                flex-wrap: wrap;
+            }
+
+
+            .nav a {
+                flex: 1;
+
+                min-width: 120px;
+
+                justify-content: center;
+            }
+
+
+            .main {
+                margin-left: 0;
+
+                padding: 25px 15px 40px;
+            }
+
+
+            .page-header {
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+
+            .back-button {
+                width: 100%;
+            }
+
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+
+            .card {
+                padding: 20px;
+            }
+
+
+            .buttons {
+                flex-direction: column-reverse;
+            }
+
+
+            .cancel-button,
+            .submit-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ============================================================
+         SIDEBAR
+    ============================================================ -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <h1>IT Support</h1>
+
+            <p>
+                Ticket Management System
+            </p>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <a href="/Dashboard.html">
+
+                <span class="nav-icon">▦</span>
+
+                Dashboard
+
+            </a>
+
+
+            <a
+                href="/ticket-form.html"
+                class="active">
+
+                <span class="nav-icon">＋</span>
+
+                Create Ticket
+
+            </a>
+
+
+            <a href="/staff-profile.html">
+
+                <span class="nav-icon">♙</span>
+
+                Staff Profile
+
+            </a>
+
+
+            <a href="/">
+
+                <span class="nav-icon">↪</span>
+
+                Logout
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ============================================================
+         MAIN
+    ============================================================ -->
+
+    <main class="main">
+
+        <div class="main-container">
+
+
+            <!-- ====================================================
+                 PAGE HEADER
+            ==================================================== -->
+
+            <div class="page-header">
+
+                <div class="page-title">
+
+                    <h2>
+                        Create Support Ticket
+                    </h2>
+
+                    <p>
+                        Enter the customer's information
+                        and support request.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="back-button"
+                    onclick="goBack()">
+
+                    ← Back to Dashboard
+
+                </button>
+
+            </div>
+
+
+            <!-- ====================================================
+                 FORM
+            ==================================================== -->
+
+            <form id="ticketForm">
+
+
+                <!-- ==================================================
+                     CUSTOMER INFORMATION
+                ================================================== -->
+
+                <div class="card">
+
+                    <div class="section-header">
+
+                        <div class="section-number">
+                            1
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Customer Information
+                            </h3>
+
+                            <p>
+                                Enter the customer's contact details.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- CUSTOMER NAME -->
+
+                        <div class="form-group">
+
+                            <label for="customerName">
+
+                                Customer Name
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="customerName"
+                                placeholder="Enter customer name"
+                                required>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="email">
+
+                                Email
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="customer@example.com"
+                                required>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     TICKET INFORMATION
+                ================================================== -->
+
+                <div class="card">
+
+                    <div class="section-header">
+
+                        <div class="section-number">
+                            2
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Ticket Information
+                            </h3>
+
+                            <p>
+                                Describe the issue and assign support.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- ISSUE -->
+
+                        <div class="form-group full-width">
+
+                            <label for="issue">
+
+                                Issue
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <textarea
+                                id="issue"
+                                placeholder="Describe the customer's IT issue..."
+                                required></textarea>
+
+                        </div>
+
+
+                        <!-- SUPPORT TYPE -->
+
+                        <div class="form-group">
+
+                            <label for="supportType">
+
+                                Support Type
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <select
+                                id="supportType"
+                                required>
+
+                                <option value="">
+                                    Select support type
+                                </option>
+
+                                <option value="Phone Support">
+                                    Phone Support
+                                </option>
+
+                                <option value="Email Support">
+                                    Email Support
+                                </option>
+
+                                <option value="Remote Support">
+                                    Remote Support
+                                </option>
+
+                                <option value="On-site Support">
+                                    On-site Support
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PRIORITY -->
+
+                        <div class="form-group">
+
+                            <label for="priority">
+
+                                Priority
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <select
+                                id="priority"
+                                required>
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                                <option
+                                    value="Medium"
+                                    selected>
+
+                                    Medium
+
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                                <option value="Critical">
+                                    Critical
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="form-group">
+
+                            <label for="status">
+                                Status
+                            </label>
+
+
+                            <select id="status">
+
+                                <option value="Open">
+                                    Open
+                                </option>
+
+                                <option value="In Progress">
+                                    In Progress
+                                </option>
+
+                                <option value="Pending">
+                                    Pending
+                                </option>
+
+                                <option value="Closed">
+                                    Closed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ASSIGNED ENGINEER -->
+
+                        <div class="form-group">
+
+                            <label for="assignedEngineer">
+
+                                Assigned Engineer
+
+                            </label>
+
+
+                            <select id="assignedEngineer">
+
+                                <option value="">
+                                    Unassigned
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     APPOINTMENT
+                ================================================== -->
+                
+                <div
+                    id="appointmentSection"
+                    class="card"
+                    style="display: none;">
+
+
+                    <div class="section-header">
+
+                        <div class="section-number">
+                            3
+                        </div>
+                        
+                        <div>   
+
+                            <h3>
+                                Appointment
+                            </h3>
+
+                            <p>
+                                Select an available appointment slot.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="appointment-card">
+
+
+                        <div class="form-grid">
+
+                            <div
+                                class="form-group"
+                                id="onsiteWorkTypeGroup"
+                                style="display: none;">
+
+                                <label for="onsiteWorkType">
+
+                                    On-site Work Type
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <select id="onsiteWorkType">
+
+                                    <option value="">
+                                        Select work type
+                                    </option>
+
+                                    <option value="Ad Hoc">
+                                        Ad Hoc (Min 2 Hours)
+                                    </option>
+
+                                    <option value="Maintenance">
+                                        Maintenance (Min 1 Hour)
+                                    </option>
+
+                                    <option value="Project">
+                                        Project (Measured in Days)
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- APPOINTMENT DATE -->   
+
+                            <div class="form-group">
+
+                                <label for="appointmentDate">
+
+                                    Appointment Date
+
+                                </label>
+
+
+                                <input
+                                    type="date"
+                                    id="appointmentDate">
+
+                            </div>
+
+
+                            <!-- APPOINTMENT TIME -->
+
+                            <div class="form-group">
+
+                                <label for="appointmentTime">
+
+                                    Appointment Time
+
+                                </label>
+
+
+                                <select id="appointmentTime">
+
+                                    <option value="">
+                                        Select appointment time
+                                    </option>
+
+                                    <option value="08:30">
+                                        8:30 AM
+                                    </option>
+
+                                    <option value="09:00">
+                                        9:00 AM
+                                    </option>
+
+                                    <option value="11:30">
+                                        11:30 AM
+                                    </option>
+
+                                    <option value="13:00">
+                                        1:00 PM
+                                    </option>
+
+                                    <option value="15:00">
+                                        3:00 PM
+                                    </option>
+
+                                    <option value="16:00">
+                                        4:00 PM
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- APPOINTMENT STATUS -->
+
+                            <div class="form-group">
+
+                                <label for="appointmentStatus">
+
+                                    Appointment Status
+
+                                </label>
+
+
+                                <select id="appointmentStatus">
+
+                                    <option value="Pending">
+                                        Pending
+                                    </option>
+
+                                    <option value="Confirmed">
+                                        Confirmed
+                                    </option>
+
+                                    <option value="Reschedule Required">
+                                        Reschedule Required
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                       
+                            
+
+                            <!-- ==================================================
+                                 DURATION
+                            ================================================== -->
+
+                            <div
+                                class="form-group"
+                                id="appointmentDurationGroup"
+                                style="display: none;">
+
+                                <label for="appointmentDuration">
+
+                                    Duration
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="appointmentDuration"
+                                    min="1"
+                                    step="0.5"
+                                    placeholder="Enter duration">
+
+
+                                <small
+                                    id="durationHelp"
+                                    style="
+                                        margin-top: 6px;
+                                        color: #64748b;
+                                    ">
+
+                                    Select an on-site work type
+                                    to see the minimum duration.
+
+                                </small>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     BUTTONS
+                ================================================== -->
+
+                <div class="card">
+
+                    <div class="buttons">
+
+
+                        <button
+                            type="submit"
+                            class="submit-button"
+                            id="submitButton">
+
+                            Create Ticket
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="cancel-button"
+                            onclick="goBack()">
+
+                            Cancel
+
+                        </button>
+
+
+                    </div>
+
+
+                    <div class="form-note">
+
+                        <span class="required">
+                            *
+                        </span>
+
+                        Required fields
+
+                    </div>
+
+
+                    <div
+                        id="message"
+                        class="message">
+
+                    </div>
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </main>
+
+
+<script>
+
+
+    // ============================================================
+    // ELEMENTS
+    // ============================================================
+
+    const ticketForm =
+        document.getElementById("ticketForm");
+
+
+    const supportType =
+        document.getElementById("supportType");
+
+
+    const onsiteWorkType =
+        document.getElementById("onsiteWorkType");
+
+
+    const onsiteWorkTypeGroup =
+        document.getElementById("onsiteWorkTypeGroup");
+
+
+    const appointmentDuration =
+        document.getElementById("appointmentDuration");
+
+
+    const appointmentDurationGroup =
+        document.getElementById("appointmentDurationGroup");
+
+
+    const durationHelp =
+        document.getElementById("durationHelp");
+
+
+    const assignedEngineer =
+        document.getElementById("assignedEngineer");
+
+
+    const appointmentSection =
+        document.getElementById("appointmentSection");
+
+
+    const appointmentDate =
+        document.getElementById("appointmentDate");
+
+
+    const appointmentTime =
+        document.getElementById("appointmentTime");
+
+
+    const appointmentStatus =
+        document.getElementById("appointmentStatus");
+
+
+    const submitButton =
+        document.getElementById("submitButton");
+
+
+    const message =
+        document.getElementById("message");
+
+
+    // ============================================================
+    // APPOINTMENT TIMES
+    // ============================================================
+
+    const appointmentTimes = [
+
+        {
+            value: "08:30",
+            label: "8:30 AM"
+        },
+
+        {
+            value: "09:00",
+            label: "9:00 AM"
+        },
+
+        {
+            value: "11:30",
+            label: "11:30 AM"
+        },
+
+        {
+            value: "13:00",
+            label: "1:00 PM"
+        },
+
+        {
+            value: "15:00",
+            label: "3:00 PM"
+        },
+
+        {
+            value: "16:00",
+            label: "4:00 PM"
+        }
+
+    ];
+
+
+    // ============================================================
+    // AVAILABILITY
+    // ============================================================
+
+    let engineerAvailability = {};
+
+    let availabilityRequestNumber = 0;
+
+
+    // ============================================================
+    // ON-SITE WORK TYPE CHANGE
+    // ============================================================
+
+    onsiteWorkType.addEventListener(
+        "change",
+        function () {
+
+            updateDurationRules();
+
+            /*
+             * Duration affects appointment availability.
+             * Re-check all times whenever the duration changes.
+             */
+            checkAllAppointmentTimes();
+
+            updateSubmitButton();
+
+        }
+    );
+
+
+    // ============================================================
+    // DURATION CHANGE
+    // ============================================================
+
+    appointmentDuration.addEventListener(
+        "input",
+        function () {
+
+            updateSubmitButton();
+
+            /*
+             * Re-check calendar availability when duration changes.
+             */
+            if (
+                supportType.value === "On-site Support"
+            ) {
+
+                checkAllAppointmentTimes();
+
+            }
+
+        }
+    );
+
+
+    // ============================================================
+    // UPDATE DURATION RULES
+    // ============================================================
+
+    function updateDurationRules() {
+
+        const type =
+            onsiteWorkType.value;
+
+
+        // --------------------------------------------------------
+        // AD HOC
+        // --------------------------------------------------------
+
+        if (type === "Ad Hoc") {
+
+            appointmentDuration.min =
+                "2";
+
+            appointmentDuration.step =
+                "0.5";
+
+            appointmentDuration.placeholder =
+                "Minimum 2 hours";
+
+            durationHelp.textContent =
+                "Ad Hoc work requires a minimum of 2 hours.";
+
+        }
+
+
+        // --------------------------------------------------------
+        // MAINTENANCE
+        // --------------------------------------------------------
+
+        else if (type === "Maintenance") {
+
+            appointmentDuration.min =
+                "1";
+
+            appointmentDuration.step =
+                "0.5";
+
+            appointmentDuration.placeholder =
+                "Minimum 1 hour";
+
+            durationHelp.textContent =
+                "Maintenance requires a minimum of 1 hour.";
+
+        }
+
+
+        // --------------------------------------------------------
+        // PROJECT
+        // --------------------------------------------------------
+
+        else if (type === "Project") {
+
+            appointmentDuration.min =
+                "1";
+
+            appointmentDuration.step =
+                "1";
+
+            appointmentDuration.placeholder =
+                "Enter number of days";
+
+            durationHelp.textContent =
+                "Project duration is measured in whole days.";
+
+        }
+
+
+        // --------------------------------------------------------
+        // NOTHING SELECTED
+        // --------------------------------------------------------
+
+        else {
+
+            appointmentDuration.min =
+                "1";
+
+            appointmentDuration.step =
+                "0.5";
+
+            appointmentDuration.placeholder =
+                "Enter duration";
+
+            durationHelp.textContent =
+                "Select an on-site work type to see the minimum duration.";
+
+        }
+
+    }
+
+
+    // ============================================================
+    // SUPPORT TYPE CHANGE
+    // ============================================================
+
+    supportType.addEventListener(
+        "change",
+        function () {
+
+
+            const usesAppointment =
+                this.value === "Remote Support" ||
+                this.value === "On-site Support";
+
+
+            // ====================================================
+            // REMOTE / ON-SITE
+            // ====================================================
+
+            if (usesAppointment) {
+
+                appointmentSection.style.display =
+                    "block";
+
+
+                // ------------------------------------------------
+                // ON-SITE SUPPORT
+                // ------------------------------------------------
+
+                if (
+                    this.value === "On-site Support"
+                ) {
+
+                    onsiteWorkTypeGroup.style.display =
+                        "flex";
+
+                    appointmentDurationGroup.style.display =
+                        "flex";
+
+                    onsiteWorkType.required =
+                        true;
+
+                    appointmentDuration.required =
+                        true;
+
+                }
+
+
+                // ------------------------------------------------
+                // REMOTE SUPPORT
+                // ------------------------------------------------
+
+                else {
+
+                    onsiteWorkTypeGroup.style.display =
+                        "none";
+
+                    appointmentDurationGroup.style.display =
+                        "none";
+
+                    onsiteWorkType.required =
+                        false;
+
+                    appointmentDuration.required =
+                        false;
+
+                    onsiteWorkType.value =
+                        "";
+
+                    appointmentDuration.value =
+                        "";
+
+                }
+
+
+                updateDurationRules();
+
+                resetAppointmentTimes();
+
+                updateSubmitButton();
+
+            }
+
+
+            // ====================================================
+            // PHONE / EMAIL
+            // ====================================================
+
+            else {
+
+                appointmentSection.style.display =
+                    "none";
+
+
+                appointmentDate.value =
+                    "";
+
+                appointmentTime.value =
+                    "";
+
+                appointmentStatus.value =
+                    "Pending";
+
+
+                onsiteWorkType.value =
+                    "";
+
+                onsiteWorkTypeGroup.style.display =
+                    "none";
+
+                onsiteWorkType.required =
+                    false;
+
+
+                appointmentDuration.value =
+                    "";
+
+                appointmentDurationGroup.style.display =
+                    "none";
+
+                appointmentDuration.required =
+                    false;
+
+
+                clearAvailability();
+
+                submitButton.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+
+    // ============================================================
+    // ENGINEER CHANGE
+    // ============================================================
+
+    assignedEngineer.addEventListener(
+        "change",
+        function () {
+
+            checkAllAppointmentTimes();
+
+        }
+    );
+
+
+    // ============================================================
+    // DATE CHANGE
+    // ============================================================
+
+    appointmentDate.addEventListener(
+        "change",
+        function () {
+
+            checkAllAppointmentTimes();
+
+        }
+    );
+
+
+    // ============================================================
+    // TIME CHANGE
+    // ============================================================
+
+    appointmentTime.addEventListener(
+        "change",
+        function () {
+
+            updateSubmitButton();
+
+        }
+    );
+
+
+    // ============================================================
+    // GET CALENDAR DURATION
+    // ============================================================
+
+    function getCalendarDuration() {
+
+        const currentSupportType =
+            supportType.value;
+
+
+        // --------------------------------------------------------
+        // REMOTE SUPPORT
+        // --------------------------------------------------------
+
+        if (
+            currentSupportType ===
+            "Remote Support"
+        ) {
+
+            /*
+             * Keep existing Remote Support behaviour.
+             * Backend currently uses its default duration.
+             */
+
+            return "";
+
+        }
+
+
+        // --------------------------------------------------------
+        // ON-SITE SUPPORT
+        // --------------------------------------------------------
+
+        if (
+            currentSupportType ===
+            "On-site Support"
+        ) {
+
+            const duration =
+                Number(
+                    appointmentDuration.value
+                );
+
+
+            if (
+                !duration ||
+                duration <= 0
+            ) {
+
+                return "";
+
+            }
+
+
+            /*
+             * IMPORTANT:
+             *
+             * Ad Hoc / Maintenance
+             * = duration is already in hours.
+             *
+             * Project
+             * = duration is in days.
+             *
+             * We are currently sending the original
+             * value to the backend.
+             *
+             * The backend will handle the Project
+             * day-to-hour conversion.
+             */
+
+            return duration;
+
+        }
+
+
+        return "";
+
+    }
+
+
+    // ============================================================
+    // CHECK ALL SIX APPOINTMENT TIMES
+    // ============================================================
+
+    async function checkAllAppointmentTimes() {
+
+
+        engineerAvailability = {};
+
+
+        const engineer =
+            assignedEngineer.value;
+
+
+        const date =
+            appointmentDate.value;
+
+
+        if (!engineer || !date) {
+
+            resetAppointmentTimes();
+
+            updateSubmitButton();
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------------
+        // VALIDATE ON-SITE DURATION BEFORE CALENDAR CHECK
+        // --------------------------------------------------------
+
+        if (
+            supportType.value ===
+            "On-site Support"
+        ) {
+
+            if (!onsiteWorkType.value) {
+
+                resetAppointmentTimes();
+
+                updateSubmitButton();
+
+                return;
+
+            }
+
+
+            const duration =
+                Number(
+                    appointmentDuration.value
+                );
+
+
+            if (
+                !duration ||
+                duration <= 0
+            ) {
+
+                resetAppointmentTimes();
+
+                updateSubmitButton();
+
+                return;
+
+            }
+
+        }
+
+
+        const currentRequest =
+            ++availabilityRequestNumber;
+
+
+        submitButton.disabled =
+            true;
+
+
+        // --------------------------------------------------------
+        // DISABLE ALL TIMES WHILE CHECKING
+        // --------------------------------------------------------
+
+        Array.from(
+            appointmentTime.options
+        ).forEach(
+            option => {
+
+                if (option.value) {
+
+                    option.disabled =
+                        true;
+
+                }
+
+            }
+        );
+
+
+        try {
+
+
+            const results =
+                await Promise.all(
+
+                    appointmentTimes.map(
+                        async time => {
+
+
+                            const calendarDuration =
+                                getCalendarDuration();
+
+
+                            let url =
+                                `/api/appointments/availability` +
+                                `?engineerName=${encodeURIComponent(engineer)}` +
+                                `&appointmentDate=${encodeURIComponent(date)}` +
+                                `&appointmentTime=${encodeURIComponent(time.value)}` +
+                                `&supportType=${encodeURIComponent(supportType.value)}`;
+
+
+                            /*
+                             * Only send appointment duration
+                             * for On-site Support.
+                             */
+
+                            if (
+                                supportType.value ===
+                                "On-site Support"
+                            ) {
+
+                                url +=
+                                    `&appointmentDuration=${encodeURIComponent(calendarDuration)}`;
+
+                                url +=
+                                    `&onsiteWorkType=${encodeURIComponent(onsiteWorkType.value)}`;
+
+                            }
+
+
+                            const response =
+                                await fetch(url);
+
+
+                            const data =
+                                await response.json();
+
+
+                            if (
+                                !response.ok ||
+                                !data.success
+                            ) {
+
+                                throw new Error(
+                                    data.message ||
+                                    "Unable to check availability."
+                                );
+
+                            }
+
+
+                            return {
+
+                                value:
+                                    time.value,
+
+                                available:
+                                    data.available
+
+                            };
+
+                        }
+                    )
+
+                );
+
+
+            if (
+                currentRequest !==
+                availabilityRequestNumber
+            ) {
+
+                return;
+
+            }
+
+
+            results.forEach(
+                result => {
+
+                    engineerAvailability[
+                        result.value
+                    ] =
+                        result.available;
+
+                }
+            );
+
+
+            updateDropdownOptions();
+
+            updateSubmitButton();
+
+
+        }
+
+
+        catch (error) {
+
+
+            console.error(
+                "Availability check error:",
+                error
+            );
+
+
+            if (
+                currentRequest !==
+                availabilityRequestNumber
+            ) {
+
+                return;
+
+            }
+
+
+            engineerAvailability =
+                {};
+
+
+            Array.from(
+                appointmentTime.options
+            ).forEach(
+                option => {
+
+                    if (option.value) {
+
+                        option.disabled =
+                            true;
+
+                        option.textContent =
+                            `${getTimeLabel(option.value)} — Unavailable`;
+
+                    }
+
+                }
+            );
+
+
+            submitButton.disabled =
+                true;
+
+        }
+
+    }
+
+
+    // ============================================================
+    // UPDATE DROPDOWN OPTIONS
+    // ============================================================
+
+    function updateDropdownOptions() {
+
+
+        const currentValue =
+            appointmentTime.value;
+
+
+        appointmentTimes.forEach(
+            time => {
+
+
+                const option =
+                    Array.from(
+                        appointmentTime.options
+                    ).find(
+                        option =>
+                            option.value ===
+                            time.value
+                    );
+
+
+                if (!option) {
+
+                    return;
+
+                }
+
+
+                const available =
+                    engineerAvailability[
+                        time.value
+                    ];
+
+
+                if (available === true) {
+
+                    option.textContent =
+                        time.label;
+
+                    option.disabled =
+                        false;
+
+                }
+
+
+                else {
+
+                    option.textContent =
+                        `${time.label} — Unavailable`;
+
+                    option.disabled =
+                        true;
+
+                }
+
+            }
+        );
+
+
+        if (
+            currentValue &&
+            engineerAvailability[
+                currentValue
+            ] === true
+        ) {
+
+            appointmentTime.value =
+                currentValue;
+
+        }
+
+
+        else {
+
+            appointmentTime.value =
+                "";
+
+        }
+
+    }
+
+
+    // ============================================================
+    // GET TIME LABEL
+    // ============================================================
+
+    function getTimeLabel(value) {
+
+        const time =
+            appointmentTimes.find(
+                item =>
+                    item.value ===
+                    value
+            );
+
+
+        return time
+            ? time.label
+            : value;
+
+    }
+
+
+    // ============================================================
+    // RESET APPOINTMENT TIMES
+    // ============================================================
+
+    function resetAppointmentTimes() {
+
+
+        engineerAvailability =
+            {};
+
+
+        appointmentTime.innerHTML =
+            "";
+
+
+        const defaultOption =
+            document.createElement(
+                "option"
+            );
+
+
+        defaultOption.value =
+            "";
+
+
+        defaultOption.textContent =
+            "Select appointment time";
+
+
+        appointmentTime.appendChild(
+            defaultOption
+        );
+
+
+        appointmentTimes.forEach(
+            time => {
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    time.value;
+
+
+                option.textContent =
+                    time.label;
+
+
+                option.disabled =
+                    false;
+
+
+                appointmentTime.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+
+    // ============================================================
+    // CLEAR AVAILABILITY
+    // ============================================================
+
+    function clearAvailability() {
+
+
+        availabilityRequestNumber++;
+
+
+        engineerAvailability =
+            {};
+
+
+        resetAppointmentTimes();
+
+    }
+
+
+    // ============================================================
+    // UPDATE SUBMIT BUTTON
+    // ============================================================
+
+    function updateSubmitButton() {
+
+
+        const currentSupportType =
+            supportType.value;
+
+
+        const usesAppointment =
+            currentSupportType ===
+            "Remote Support" ||
+
+            currentSupportType ===
+            "On-site Support";
+
+
+        // --------------------------------------------------------
+        // PHONE / EMAIL
+        // --------------------------------------------------------
+
+        if (!usesAppointment) {
+
+            submitButton.disabled =
+                false;
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------------
+        // BASIC APPOINTMENT REQUIREMENTS
+        // --------------------------------------------------------
+
+        const engineer =
+            assignedEngineer.value;
+
+
+        const date =
+            appointmentDate.value;
+
+
+        const time =
+            appointmentTime.value;
+
+
+        if (
+            !engineer ||
+            !date ||
+            !time
+        ) {
+
+            submitButton.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------------
+        // ON-SITE WORK TYPE
+        // --------------------------------------------------------
+
+        if (
+            currentSupportType ===
+            "On-site Support"
+        ) {
+
+            if (!onsiteWorkType.value) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            const duration =
+                Number(
+                    appointmentDuration.value
+                );
+
+
+            if (
+                !duration ||
+                duration <= 0
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            // AD HOC
+
+            if (
+                onsiteWorkType.value ===
+                "Ad Hoc" &&
+                duration < 2
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            // MAINTENANCE
+
+            if (
+                onsiteWorkType.value ===
+                "Maintenance" &&
+                duration < 1
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            // PROJECT
+
+            if (
+                onsiteWorkType.value ===
+                "Project" &&
+                duration < 1
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            // AD HOC / MAINTENANCE MUST USE 0.5 STEPS
+
+            if (
+                onsiteWorkType.value !==
+                "Project" &&
+                duration % 0.5 !== 0
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            // PROJECT MUST BE WHOLE DAYS
+
+            if (
+                onsiteWorkType.value ===
+                "Project" &&
+                !Number.isInteger(duration)
+            ) {
+
+                submitButton.disabled =
+                    true;
+
+                return;
+
+            }
+
+        }
+
+
+        // --------------------------------------------------------
+        // CALENDAR AVAILABILITY
+        // --------------------------------------------------------
+
+        if (
+            engineerAvailability[
+                time
+            ] !== true
+        ) {
+
+            submitButton.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        submitButton.disabled =
+            false;
+
+    }
+
+
+    // ============================================================
+    // LOAD ENGINEERS
+    // ============================================================
+
+    async function loadEngineers() {
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/api/staff"
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    "Could not load staff."
+                );
+
+            }
+
+
+            data.staff.forEach(
+                staff => {
+
+
+                    /*
+                     * Engineers are loaded dynamically
+                     * from the Staff sheet.
+                     */
+
+                    if (
+                        staff["Role"] ===
+                        "Engineer"
+                    ) {
+
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            staff["Name"];
+
+
+                        option.textContent =
+                            staff["Name"];
+
+
+                        assignedEngineer.appendChild(
+                            option
+                        );
+
+                    }
+
+                }
+            );
+
+
+        }
+
+
+        catch (error) {
+
+
+            console.error(
+                "Error loading engineers:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // ============================================================
+    // CREATE TICKET
+    // ============================================================
+
+    ticketForm.addEventListener(
+        "submit",
+        async function(event) {
+
+
+            event.preventDefault();
+
+
+            const currentSupportType =
+                supportType.value;
+
+
+            const usesAppointment =
+                currentSupportType ===
+                "Remote Support" ||
+
+                currentSupportType ===
+                "On-site Support";
+
+
+            // ====================================================
+            // VALIDATE APPOINTMENT
+            // ====================================================
+
+            if (usesAppointment) {
+
+
+                // ------------------------------------------------
+                // ENGINEER
+                // ------------------------------------------------
+
+                if (
+                    !assignedEngineer.value
+                ) {
+
+                    showError(
+                        "Please select an assigned engineer."
+                    );
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------------
+                // DATE
+                // ------------------------------------------------
+
+                if (
+                    !appointmentDate.value
+                ) {
+
+                    showError(
+                        "Please select an appointment date."
+                    );
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------------
+                // TIME
+                // ------------------------------------------------
+
+                if (
+                    !appointmentTime.value
+                ) {
+
+                    showError(
+                        "Please select an available appointment time."
+                    );
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------------
+                // AVAILABILITY
+                // ------------------------------------------------
+
+                if (
+                    engineerAvailability[
+                        appointmentTime.value
+                    ] !== true
+                ) {
+
+                    showError(
+                        "The selected appointment time is unavailable. Please choose another time."
+                    );
+
+                    return;
+
+                }
+
+
+                // =================================================
+                // ON-SITE VALIDATION
+                // =================================================
+
+                if (
+                    currentSupportType ===
+                    "On-site Support"
+                ) {
+
+
+                    // ---------------------------------------------
+                    // WORK TYPE
+                    // ---------------------------------------------
+
+                    if (
+                        !onsiteWorkType.value
+                    ) {
+
+                        showError(
+                            "Please select an on-site work type."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // DURATION
+                    // ---------------------------------------------
+
+                    const duration =
+                        Number(
+                            appointmentDuration.value
+                        );
+
+
+                    if (
+                        !duration ||
+                        duration <= 0
+                    ) {
+
+                        showError(
+                            "Please enter a valid duration."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // AD HOC
+                    // ---------------------------------------------
+
+                    if (
+                        onsiteWorkType.value ===
+                        "Ad Hoc" &&
+                        duration < 2
+                    ) {
+
+                        showError(
+                            "Ad Hoc support requires a minimum duration of 2 hours."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // MAINTENANCE
+                    // ---------------------------------------------
+
+                    if (
+                        onsiteWorkType.value ===
+                        "Maintenance" &&
+                        duration < 1
+                    ) {
+
+                        showError(
+                            "Maintenance requires a minimum duration of 1 hour."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // PROJECT
+                    // ---------------------------------------------
+
+                    if (
+                        onsiteWorkType.value ===
+                        "Project" &&
+                        duration < 1
+                    ) {
+
+                        showError(
+                            "Project duration must be at least 1 day."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // AD HOC / MAINTENANCE STEP
+                    // ---------------------------------------------
+
+                    if (
+                        onsiteWorkType.value !==
+                        "Project" &&
+                        duration % 0.5 !== 0
+                    ) {
+
+                        showError(
+                            "Duration must be in 0.5 hour increments."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // PROJECT WHOLE DAYS
+                    // ---------------------------------------------
+
+                    if (
+                        onsiteWorkType.value ===
+                        "Project" &&
+                        !Number.isInteger(duration)
+                    ) {
+
+                        showError(
+                            "Project duration must be a whole number of days."
+                        );
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+
+            // ====================================================
+            // CUSTOMER INFORMATION
+            // ====================================================
+
+            const customerName =
+                document
+                    .getElementById(
+                        "customerName"
+                    )
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById(
+                        "email"
+                    )
+                    .value
+                    .trim();
+
+
+            const issue =
+                document
+                    .getElementById(
+                        "issue"
+                    )
+                    .value
+                    .trim();
+
+
+            if (
+                !customerName ||
+                !email ||
+                !issue ||
+                !currentSupportType
+            ) {
+
+                showError(
+                    "Please complete all required fields."
+                );
+
+                return;
+
+            }
+
+
+            // ====================================================
+            // GET DURATION
+            // ====================================================
+
+            let finalAppointmentDuration =
+                "";
+
+
+            if (
+                currentSupportType ===
+                "On-site Support"
+            ) {
+
+                finalAppointmentDuration =
+                    Number(
+                        appointmentDuration.value
+                    );
+
+            }
+
+
+            // ====================================================
+            // TICKET OBJECT
+            // ====================================================
+
+            const ticket = {
+
+                customerName:
+                    customerName,
+
+
+                email:
+                    email,
+
+
+                issue:
+                    issue,
+
+
+                supportType:
+                    currentSupportType,
+
+
+                onsiteWorkType:
+                    currentSupportType ===
+                    "On-site Support"
+
+                        ? onsiteWorkType.value
+
+                        : "",
+
+
+                priority:
+                    document
+                        .getElementById(
+                            "priority"
+                        )
+                        .value,
+
+
+                status:
+                    document
+                        .getElementById(
+                            "status"
+                        )
+                        .value,
+
+
+                assignedEngineer:
+                    assignedEngineer.value,
+
+
+                appointmentDate:
+                    usesAppointment
+
+                        ? appointmentDate.value
+
+                        : "",
+
+
+                appointmentTime:
+                    usesAppointment
+
+                        ? appointmentTime.value
+
+                        : "",
+
+
+                appointmentDuration:
+                    finalAppointmentDuration,
+
+
+                appointmentStatus:
+                    usesAppointment
+
+                        ? appointmentStatus.value
+
+                        : ""
+
+            };
+
+
+            console.log(
+                "Ticket being submitted:",
+                ticket
+            );
+
+
+            // ====================================================
+            // DISABLE BUTTON
+            // ====================================================
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.textContent =
+                "Creating Ticket...";
+
+
+            message.style.display =
+                "none";
+
+
+            // ====================================================
+            // CREATE TICKET
+            // ====================================================
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        "/api/tickets",
+                        {
+
+                            method:
+                                "POST",
+
+                            headers:
+                                {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                            body:
+                                JSON.stringify(
+                                    ticket
+                                )
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to create ticket."
+                    );
+
+                }
+
+
+                // =================================================
+                // SUCCESS
+                // =================================================
+
+                message.className =
+                    "message success";
+
+
+                message.textContent =
+                    `Ticket ${data.ticketId} created successfully.`;
+
+
+                message.style.display =
+                    "block";
+
+
+                // =================================================
+                // GO TO DETAILS
+                // =================================================
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            `/ticket-details.html?id=${encodeURIComponent(
+                                data.ticketId
+                            )}`;
+
+                    },
+                    1000
+                );
+
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(
+                    "Error creating ticket:",
+                    error
+                );
+
+
+                showError(
+                    error.message
+                );
+
+
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.textContent =
+                    "Create Ticket";
+
+            }
+
+        }
+    );
+
+
+    // ============================================================
+    // SHOW ERROR
+    // ============================================================
+
+    function showError(text) {
+
+
+        message.className =
+            "message error";
+
+
+        message.textContent =
+            text;
+
+
+        message.style.display =
+            "block";
+
+
+        message.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    }
+
+
+    // ============================================================
+    // GO BACK
+    // ============================================================
+
+    function goBack() {
+
+        window.location.href =
+            "/Dashboard.html";
+
+    }
+
+
+    // ============================================================
+    // INITIALISE
+    // ============================================================
+
+    resetAppointmentTimes();
+
+    loadEngineers();
+
+    updateDurationRules();
+
+    updateSubmitButton();
+
+
+</script>
+
+
+</body>
+
+</html>

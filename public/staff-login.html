@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Login - IT Support</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eff6ff;
+            border-radius: 12px;
+
+            font-size: 26px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin: 8px 0 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 13px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+
+            font-size: 14px;
+            outline: none;
+
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 13px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-button:hover {
+            background: #1d4ed8;
+        }
+
+        .login-button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            display: none;
+
+            margin-bottom: 18px;
+            padding: 11px 13px;
+
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+
+            color: #b91c1c;
+            font-size: 13px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back-link:hover {
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="logo">
+                🛠️
+            </div>
+
+            <h1>Staff Login</h1>
+
+            <p class="subtitle">
+                Sign in to access the IT Support system
+            </p>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <form id="staffLoginForm">
+
+                <div class="form-group">
+                    <label for="staffId">Staff ID</label>
+
+                    <input
+                        type="text"
+                        id="staffId"
+                        placeholder="Enter your Staff ID"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="login-button"
+                >
+                    Login
+                </button>
+
+            </form>
+ 
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const loginForm = document.getElementById("staffLoginForm");
+        const staffIdInput = document.getElementById("staffId");
+        const passwordInput = document.getElementById("password");
+        const loginButton = document.getElementById("loginButton");
+        const errorMessage = document.getElementById("errorMessage");
+
+
+        loginForm.addEventListener("submit", async function (event) {
+
+            event.preventDefault();
+
+            errorMessage.classList.remove("show");
+            errorMessage.textContent = "";
+
+            const staffId = staffIdInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!staffId || !password) {
+
+                showError("Please enter your Staff ID and password.");
+                return;
+
+            }
+
+
+            loginButton.disabled = true;
+            loginButton.textContent = "Logging in...";
+
+
+            try {
+
+                const response = await fetch("/api/staff/login", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        staffId: staffId,
+                        password: password
+                    })
+
+                });
+
+
+                const responseText = await response.text();
+
+                let data;
+
+                try {
+
+                    data = JSON.parse(responseText);
+
+                } catch (error) {
+
+                    console.error("Server response:", responseText);
+
+                    throw new Error(
+                        "Server returned an invalid response."
+                    );
+
+                }
+
+
+                if (!response.ok || !data.success) {
+
+                    showError(
+                        data.message || "Invalid Staff ID or password."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                    Login successful.
+
+                    Save the staff information so other staff
+                    pages can know who is logged in.
+                */
+
+                localStorage.setItem(
+                    "staff",
+                    JSON.stringify(data.staff)
+                );
+
+
+                /*
+                    Go to Staff Dashboard
+                */
+
+                window.location.href = "/dashboard.html";
+
+
+            } catch (error) {
+
+                console.error("Login error:", error);
+
+                showError(
+                    error.message ||
+                    "Unable to connect to the server."
+                );
+
+            } finally {
+
+                loginButton.disabled = false;
+                loginButton.textContent = "Login";
+
+            }
+
+        });
+
+
+        function showError(message) {
+
+            errorMessage.textContent = message;
+            errorMessage.classList.add("show");
+
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+.env
+google-service-account.json
+node_modules/
+~$*.xlsx

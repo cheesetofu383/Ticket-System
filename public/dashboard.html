@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>IT Support Dashboard</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #f4f7fb;
+
+            color: #172033;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            bottom: 0;
+
+            width: 245px;
+
+            background: #ffffff;
+
+            border-right: 1px solid #e5e7eb;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+            height: 82px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 24px;
+
+            border-bottom: 1px solid #eef0f3;
+        }
+
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 10px;
+
+            background: #1769aa;
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+            font-weight: bold;
+
+            margin-right: 11px;
+        }
+
+
+        .brand-text h2 {
+            margin: 0;
+
+            font-size: 15px;
+
+            color: #172033;
+        }
+
+
+        .brand-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            color: #8a94a6;
+        }
+
+
+        /* =====================================================
+           SIDEBAR NAVIGATION
+        ===================================================== */
+
+        .nav {
+            padding: 22px 13px;
+
+            flex: 1;
+        }
+
+
+        .nav-title {
+            padding: 0 12px 9px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            color: #9aa3b2;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .nav-item {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+
+            padding: 11px 13px;
+
+            margin-bottom: 4px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            color: #687386;
+
+            font-size: 14px;
+
+            transition: 0.15s;
+        }
+
+
+        .nav-item:hover {
+            background: #f3f7fb;
+
+            color: #1769aa;
+        }
+
+
+        .nav-item.active {
+            background: #eaf3fb;
+
+            color: #1769aa;
+
+            font-weight: 600;
+        }
+
+
+        .nav-icon {
+            width: 25px;
+
+            font-size: 16px;
+
+            margin-right: 8px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           SIDEBAR USER
+        ===================================================== */
+
+        .sidebar-user {
+            padding: 16px;
+
+            border-top: 1px solid #eef0f3;
+        }
+
+
+        .user-card {
+            display: flex;
+            align-items: center;
+
+            padding: 10px;
+
+            border-radius: 9px;
+
+            background: #f7f9fc;
+        }
+
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+
+            border-radius: 50%;
+
+            background: #dbeafe;
+
+            color: #1769aa;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            margin-right: 9px;
+        }
+
+
+        .user-info {
+            min-width: 0;
+        }
+
+
+        .user-info strong {
+            display: block;
+
+            font-size: 12px;
+
+            color: #263246;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        .user-info span {
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 10px;
+
+            color: #8a94a6;
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        .main {
+            margin-left: 245px;
+
+            min-height: 100vh;
+
+            padding: 30px 34px;
+        }
+
+
+        /* =====================================================
+           PAGE HEADER
+        ===================================================== */
+
+        .page-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 28px;
+        }
+
+
+        .page-title h1 {
+            margin: 0;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            color: #172033;
+        }
+
+
+        .page-title p {
+            margin: 6px 0 0;
+
+            font-size: 15px;
+
+            color: #8993a5;
+        }
+
+
+        .create-button {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            background: #1769aa;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 17px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 3px 8px
+                rgba(23, 105, 170, 0.18);
+
+            transition: 0.15s;
+        }
+
+
+        .create-button:hover {
+            background: #12588e;
+
+            transform: translateY(-1px);
+        }
+
+
+        .plus {
+            font-size: 18px;
+
+            line-height: 12px;
+        }
+
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid #e6e9ee;
+
+            border-radius: 10px;
+
+            padding: 18px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .stat-card::after {
+            content: "";
+
+            position: absolute;
+
+            right: -20px;
+            top: -20px;
+
+            width: 70px;
+            height: 70px;
+
+            border-radius: 50%;
+
+            background: #f3f7fb;
+        }
+
+
+        .stat-label {
+            position: relative;
+
+            z-index: 2;
+
+            font-size: 12px;
+
+            color: #8a94a6;
+
+            font-weight: 500;
+        }
+
+
+        .stat-number {
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 7px;
+
+            font-size: 26px;
+
+            font-weight: 700;
+
+            color: #172033;
+        }
+
+
+        .stat-description {
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 4px;
+
+            font-size: 10px;
+
+            color: #9aa3b2;
+        }
+
+
+        .stat-total .stat-number {
+            color: #1769aa;
+        }
+
+
+        .stat-open .stat-number {
+            color: #0284c7;
+        }
+
+
+        .stat-progress .stat-number {
+            color: #7c3aed;
+        }
+
+
+        .stat-pending .stat-number {
+            color: #d97706;
+        }
+
+
+        .stat-closed .stat-number {
+            color: #16a34a;
+        }
+
+
+        /* =====================================================
+           TICKETS CARD
+        ===================================================== */
+
+        .tickets-card {
+            background: white;
+
+            border: 1px solid #e4e8ee;
+
+            border-radius: 11px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 2px 8px
+                rgba(15, 23, 42, 0.025);
+        }
+
+
+        .tickets-header {
+            padding: 19px 21px;
+
+            border-bottom: 1px solid #eef0f3;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+
+        .tickets-title h2 {
+            margin: 0;
+
+            font-size: 16px;
+
+            color: #202b3c;
+        }
+
+
+        .tickets-title p {
+            margin: 4px 0 0;
+
+            font-size: 11px;
+
+            color: #9099a8;
+        }
+
+
+        /* =====================================================
+           FILTERS
+        ===================================================== */
+
+        .filter-container {
+            padding: 16px 21px;
+
+            background: #fbfcfe;
+
+            border-bottom: 1px solid #eef0f3;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .filter-label {
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: #697386;
+
+            margin-right: 3px;
+        }
+
+
+        .filter-select {
+            min-width: 165px;
+
+            padding: 9px 30px 9px 11px;
+
+            border: 1px solid #dce1e8;
+
+            border-radius: 6px;
+
+            background: white;
+
+            color: #374151;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            outline: none;
+        }
+
+
+        .filter-select:hover {
+            border-color: #c5ccd6;
+        }
+
+
+        .filter-select:focus {
+            border-color: #1769aa;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(23, 105, 170, 0.08);
+        }
+
+
+        .clear-filter-button {
+            background: white;
+
+            color: #687386;
+
+            border: 1px solid #dce1e8;
+
+            padding: 9px 13px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+
+        .clear-filter-button:hover {
+            background: #f3f4f6;
+
+            color: #374151;
+        }
+
+
+        .ticket-count {
+            margin-left: auto;
+
+            font-size: 11px;
+
+            color: #929bab;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 1180px;
+        }
+
+
+        th {
+            background: #fafbfc;
+
+            text-align: left;
+
+            padding: 13px 17px;
+
+            border-bottom: 1px solid #e7eaf0;
+
+            font-size: 12px;
+
+            color: #8a94a6;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.35px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        td {
+            padding: 15px 17px;
+
+            border-bottom: 1px solid #f0f1f4;
+
+            font-size: 14px;
+
+            color: #4b5563;
+
+            vertical-align: middle;
+        }
+
+
+        tbody tr {
+            transition: 0.12s;
+        }
+
+
+        tbody tr:hover {
+            background: #f9fbfd;
+        }
+
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+                th {
+            background: #fafbfc;
+
+            text-align: left;
+
+            padding: 13px 17px;
+
+            border-bottom: 1px solid #e7eaf0;
+
+            font-size: 12px;
+
+            color: #8a94a6;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.35px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        td {
+            padding: 15px 17px;
+
+            border-bottom: 1px solid #f0f1f4;
+
+            font-size: 14px;
+
+            color: #4b5563;
+
+            vertical-align: middle;
+        }
+
+
+        tbody tr {
+            transition: 0.12s;
+        }
+
+
+        tbody tr:hover {
+            background: #f9fbfd;
+        }
+
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* =====================================================
+           KEEP ACTION / VIEW BUTTON VISIBLE
+        ===================================================== */
+
+        th:last-child,
+        td:last-child {
+            position: sticky;
+
+            right: 0;
+
+            background: white;
+
+            z-index: 5;
+
+            box-shadow:
+                -4px 0 8px
+                rgba(15, 23, 42, 0.05);
+        }
+
+
+        th:last-child {
+            background: #fafbfc;
+
+            z-index: 6;
+        }
+
+
+        tbody tr:hover td:last-child {
+            background: #f9fbfd;
+        }
+
+        /* =====================================================
+           TICKET ID
+        ===================================================== */
+
+        .ticket-id {
+            color: #1769aa;
+
+            font-weight: 600;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           CUSTOMER
+        ===================================================== */
+
+        .customer-name {
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #303b4d;
+
+            margin-bottom: 3px;
+        }
+
+
+        .customer-email {
+            font-size: 12px;
+
+            color: #9aa3b2;
+        }
+
+
+        /* =====================================================
+           ISSUE
+        ===================================================== */
+
+        .issue-text {
+            max-width: 230px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            color: #4b5563;
+        }
+
+
+        /* =====================================================
+           SUPPORT TYPE
+        ===================================================== */
+
+        .support-type {
+            white-space: nowrap;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           PRIORITY
+        ===================================================== */
+
+        .priority {
+            padding: 5px 9px;
+
+            border-radius: 15px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            white-space: nowrap;
+        }
+
+
+        .priority-low {
+            background: #f0fdf4;
+
+            color: #15803d;
+        }
+
+
+        .priority-medium {
+            background: #eff6ff;
+
+            color: #1d4ed8;
+        }
+
+
+        .priority-high {
+            background: #fff7ed;
+
+            color: #c2410c;
+        }
+
+
+        .priority-critical {
+            background: #fef2f2;
+
+            color: #b91c1c;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            white-space: nowrap;
+        }
+
+
+        .status::before {
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            margin-right: 5px;
+        }
+
+
+        .status-open {
+            background: #e0f2fe;
+
+            color: #0369a1;
+        }
+
+
+        .status-open::before {
+            background: #0284c7;
+        }
+
+
+        .status-pending {
+            background: #fef3c7;
+
+            color: #92400e;
+        }
+
+
+        .status-pending::before {
+            background: #d97706;
+        }
+
+
+        .status-progress {
+            background: #ede9fe;
+
+            color: #6d28d9;
+        }
+
+
+        .status-progress::before {
+            background: #7c3aed;
+        }
+
+
+        .status-closed {
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        .status-closed::before {
+            background: #16a34a;
+        }
+
+
+        /* =====================================================
+           ENGINEER
+        ===================================================== */
+
+        .engineer {
+            font-size: 13px;
+
+            display: flex;
+
+            align-items: center;
+
+            white-space: nowrap;
+        }
+
+
+        .engineer-avatar {
+            width: 27px;
+            height: 27px;
+
+            border-radius: 50%;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            margin-right: 7px;
+        }
+
+
+        .engineer-name {
+            font-size: 11px;
+
+            color: #4b5563;
+
+            font-weight: 500;
+        }
+
+
+        /* =====================================================
+           APPOINTMENT
+        ===================================================== */
+
+        .appointment-date {
+            font-size: 13px;
+
+            color: #4b5563;
+
+            white-space: nowrap;
+        }
+
+
+        .appointment-time {
+            font-size: 12px;
+
+            color: #9aa3b2;
+
+            margin-top: 3px;
+        }
+
+
+        .no-appointment {
+            color: #b2b8c2;
+
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           VIEW BUTTON
+        ===================================================== */
+
+        .view-button {
+            background: white;
+
+            color: #1769aa;
+
+            border: 1px solid #cdddeb;
+
+            padding: 6px 12px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            transition: 0.15s;
+        }
+
+
+        .view-button:hover {
+            background: #1769aa;
+
+            color: white;
+
+            border-color: #1769aa;
+        }
+
+
+        /* =====================================================
+           EMPTY / LOADING
+        ===================================================== */
+
+        .message {
+            text-align: center;
+
+            padding: 45px 20px;
+
+            color: #929bab;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 70px;
+            }
+
+
+            .brand {
+                justify-content: center;
+
+                padding: 0;
+            }
+
+
+            .brand-text {
+                display: none;
+            }
+
+
+            .nav-title {
+                display: none;
+            }
+
+
+            .nav-item {
+                justify-content: center;
+
+                padding: 12px;
+            }
+
+
+            .nav-icon {
+                margin: 0;
+            }
+
+
+            .nav-item span:not(.nav-icon) {
+                display: none;
+            }
+
+
+            .sidebar-user {
+                padding: 8px;
+            }
+
+
+            .user-card {
+                justify-content: center;
+
+                padding: 8px;
+            }
+
+
+            .user-info {
+                display: none;
+            }
+
+
+            .main {
+                margin-left: 70px;
+
+                padding: 24px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .main {
+                padding: 18px;
+            }
+
+
+            .page-header {
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+            }
+
+
+            .create-button {
+                justify-content: center;
+            }
+
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .filter-container {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .filter-select,
+            .clear-filter-button {
+                width: 100%;
+            }
+
+
+            .ticket-count {
+                margin-left: 0;
+
+                margin-top: 4px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                IT
+            </div>
+
+
+            <div class="brand-text">
+
+                <h2>
+                    IT Support
+                </h2>
+
+                <span>
+                    Ticket Management
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+
+            <div class="nav-title">
+                Main Menu
+            </div>
+
+
+            <a
+                href="/Dashboard.html"
+                class="nav-item active">
+
+                <span class="nav-icon">
+                    ▦
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+                href="/ticket-form.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ＋
+                </span>
+
+                <span>
+                    Create Ticket
+                </span>
+
+            </a>
+
+
+            <a
+                href="/staff-profile.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Staff Profile
+                </span>
+
+            </a>
+
+
+            <div
+                class="nav-title"
+                style="margin-top: 25px;">
+
+                Account
+
+            </div>
+
+
+            <a
+                href="/"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="sidebar-user">
+
+            <div class="user-card">
+
+                <div class="user-avatar">
+                    IT
+                </div>
+
+
+                <div class="user-info">
+
+                    <strong>
+                        IT Support Staff
+                    </strong>
+
+                    <span>
+                        Staff Account
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="main">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+
+            <div class="page-title">
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Overview of your IT support tickets
+                </p>
+
+            </div>
+
+
+            <button
+                class="create-button"
+                onclick="createTicket()">
+
+                <span class="plus">
+                    +
+                </span>
+
+                Create Ticket
+
+            </button>
+
+
+        </div>
+
+
+        <!-- =================================================
+             STATISTICS
+        ================================================= -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card stat-total">
+
+                <div class="stat-label">
+                    Total Tickets
+                </div>
+
+                <div
+                    id="totalCount"
+                    class="stat-number">
+
+                    0
+
+                </div>
+
+                <div class="stat-description">
+                    All tickets
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-open">
+
+                <div class="stat-label">
+                    Open
+                </div>
+
+                <div
+                    id="openCount"
+                    class="stat-number">
+
+                    0
+
+                </div>
+
+                <div class="stat-description">
+                    Awaiting action
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-progress">
+
+                <div class="stat-label">
+                    In Progress
+                </div>
+
+                <div
+                    id="progressCount"
+                    class="stat-number">
+
+                    0
+
+                </div>
+
+                <div class="stat-description">
+                    Currently being handled
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-pending">
+
+                <div class="stat-label">
+                    Pending
+                </div>
+
+                <div
+                    id="pendingCount"
+                    class="stat-number">
+
+                    0
+
+                </div>
+
+                <div class="stat-description">
+                    Waiting for action
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-closed">
+
+                <div class="stat-label">
+                    Closed
+                </div>
+
+                <div
+                    id="closedCount"
+                    class="stat-number">
+
+                    0
+
+                </div>
+
+                <div class="stat-description">
+                    Completed tickets
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             TICKETS
+        ================================================= -->
+
+        <section class="tickets-card">
+
+
+            <div class="tickets-header">
+
+
+                <div class="tickets-title">
+
+                    <h2>
+                        All Tickets
+                    </h2>
+
+                    <p>
+                        Manage and view support requests
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="filter-container">
+
+
+                <span class="filter-label">
+                    Filter by:
+                </span>
+
+
+                <!-- STATUS -->
+
+                <select
+                    id="statusFilter"
+                    class="filter-select">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Closed">
+                        Closed
+                    </option>
+
+                </select>
+
+
+                <!-- PRIORITY -->
+
+                <select
+                    id="priorityFilter"
+                    class="filter-select">
+
+                    <option value="">
+                        All Priorities
+                    </option>
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                </select>
+
+
+                <!-- ENGINEER -->
+
+                <select
+                    id="engineerFilter"
+                    class="filter-select">
+
+                    <option value="">
+                        All Engineers
+                    </option>
+
+                </select>
+
+
+                <!-- SUPPORT TYPE -->
+
+                <select
+                    id="supportTypeFilter"
+                    class="filter-select">
+
+                    <option value="">
+                        All Support Types
+                    </option>
+
+                    <option value="Phone Support">
+                        Phone Support
+                    </option>
+
+                    <option value="Email Support">
+                        Email Support
+                    </option>
+
+                    <option value="Remote Support">
+                        Remote Support
+                    </option>
+
+                    <option value="On-site Support">
+                        On-site Support
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="clear-filter-button"
+                    onclick="clearFilters()">
+
+                    Clear Filters
+
+                </button>
+
+
+                <span
+                    id="ticketCount"
+                    class="ticket-count">
+
+                    Loading tickets...
+
+                </span>
+
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-container">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Ticket ID
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Issue
+                            </th>
+
+                            <th>
+                                Support Type
+                            </th>
+
+                            <th>
+                                Priority
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Assigned Engineer
+                            </th>
+
+                            <th>
+                                Appointment
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="ticketTable">
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="message">
+
+                                Loading tickets...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        // =====================================================
+        // GLOBAL VARIABLES
+        // =====================================================
+
+        let allTickets = [];
+
+
+        // =====================================================
+        // CREATE TICKET
+        // =====================================================
+
+        function createTicket() {
+
+            window.location.href =
+                "/ticket-form.html";
+
+        }
+
+
+        // =====================================================
+        // LOAD TICKETS
+        // =====================================================
+
+        async function loadTickets() {
+
+            const table =
+                document.getElementById(
+                    "ticketTable"
+                );
+
+            try {
+
+                table.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="9"
+                            class="message">
+                            Loading tickets...
+                        </td>
+                    </tr>
+                `;
+
+
+                const response =
+                    await fetch(
+                        "/api/tickets"
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to load tickets."
+                    );
+
+                }
+
+
+                allTickets =
+                    Array.isArray(data.tickets)
+                        ? data.tickets
+                        : [];
+
+
+                updateStatistics(
+                    allTickets
+                );
+
+
+                populateEngineerFilter(
+                    allTickets
+                );
+
+
+                applyFilters();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load tickets:",
+                    error
+                );
+
+
+                table.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="9"
+                            class="message">
+                            Failed to load tickets.
+                        </td>
+                    </tr>
+                `;
+
+
+                document.getElementById(
+                    "ticketCount"
+                ).textContent =
+                    "Unable to load tickets.";
+
+            }
+
+        }
+
+
+        // =====================================================
+        // UPDATE STATISTICS
+        // =====================================================
+
+        function updateStatistics(
+            tickets
+        ) {
+
+            const total =
+                tickets.length;
+
+
+            const open =
+                tickets.filter(
+                    ticket =>
+                        (
+                            ticket["Status"] ||
+                            ""
+                        ).trim() === "Open"
+                ).length;
+
+
+            const progress =
+                tickets.filter(
+                    ticket =>
+                        (
+                            ticket["Status"] ||
+                            ""
+                        ).trim() === "In Progress"
+                ).length;
+
+
+            const pending =
+                tickets.filter(
+                    ticket =>
+                        (
+                            ticket["Status"] ||
+                            ""
+                        ).trim() === "Pending"
+                ).length;
+
+
+            const closed =
+                tickets.filter(
+                    ticket =>
+                        (
+                            ticket["Status"] ||
+                            ""
+                        ).trim() === "Closed"
+                ).length;
+
+
+            document.getElementById(
+                "totalCount"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "openCount"
+            ).textContent =
+                open;
+
+
+            document.getElementById(
+                "progressCount"
+            ).textContent =
+                progress;
+
+
+            document.getElementById(
+                "pendingCount"
+            ).textContent =
+                pending;
+
+
+            document.getElementById(
+                "closedCount"
+            ).textContent =
+                closed;
+
+        }
+
+
+        // =====================================================
+        // POPULATE ENGINEER FILTER
+        // =====================================================
+
+        function populateEngineerFilter(
+            tickets
+        ) {
+
+            const select =
+                document.getElementById(
+                    "engineerFilter"
+                );
+
+
+            const currentValue =
+                select.value;
+
+
+            const engineers =
+                new Set();
+
+
+            tickets.forEach(
+                ticket => {
+
+                    const engineer =
+                        (
+                            ticket[
+                                "Assigned Engineer"
+                            ] ||
+                            ""
+                        ).trim();
+
+
+                    if (engineer) {
+
+                        engineers.add(
+                            engineer
+                        );
+
+                    }
+
+                }
+            );
+
+
+            select.innerHTML = `
+                <option value="">
+                    All Engineers
+                </option>
+            `;
+
+
+            Array.from(engineers)
+                .sort(
+                    (a, b) =>
+                        a.localeCompare(b)
+                )
+                .forEach(
+                    engineer => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            engineer;
+
+
+                        option.textContent =
+                            engineer;
+
+
+                        select.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+            if (
+                Array.from(
+                    select.options
+                ).some(
+                    option =>
+                        option.value ===
+                        currentValue
+                )
+            ) {
+
+                select.value =
+                    currentValue;
+
+            }
+
+        }
+
+
+        // =====================================================
+        // APPLY FILTERS
+        // =====================================================
+
+        function applyFilters() {
+
+            const status =
+                document.getElementById(
+                    "statusFilter"
+                ).value;
+
+
+            const priority =
+                document.getElementById(
+                    "priorityFilter"
+                ).value;
+
+
+            const engineer =
+                document.getElementById(
+                    "engineerFilter"
+                ).value;
+
+
+            const supportType =
+                document.getElementById(
+                    "supportTypeFilter"
+                ).value;
+
+
+            const filteredTickets =
+                allTickets.filter(
+                    ticket => {
+
+                        const ticketStatus =
+                            (
+                                ticket[
+                                    "Status"
+                                ] ||
+                                "Open"
+                            ).trim();
+
+
+                        const ticketPriority =
+                            (
+                                ticket[
+                                    "Priority"
+                                ] ||
+                                "Medium"
+                            ).trim();
+
+
+                        const ticketEngineer =
+                            (
+                                ticket[
+                                    "Assigned Engineer"
+                                ] ||
+                                ""
+                            ).trim();
+
+
+                        const ticketSupportType =
+                            (
+                                ticket[
+                                    "Support Type"
+                                ] ||
+                                ""
+                            ).trim();
+
+
+                        if (
+                            status &&
+                            ticketStatus !==
+                                status
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            priority &&
+                            ticketPriority !==
+                                priority
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            engineer &&
+                            ticketEngineer !==
+                                engineer
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            supportType &&
+                            ticketSupportType !==
+                                supportType
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        return true;
+
+                    }
+                );
+
+
+            renderTickets(
+                filteredTickets
+            );
+
+        }
+
+
+        // =====================================================
+        // RENDER TICKETS
+        // =====================================================
+
+        function renderTickets(
+            tickets
+        ) {
+
+            const table =
+                document.getElementById(
+                    "ticketTable"
+                );
+
+
+            const count =
+                document.getElementById(
+                    "ticketCount"
+                );
+
+
+            count.textContent =
+                `${tickets.length} ticket${
+                    tickets.length === 1
+                        ? ""
+                        : "s"
+                }`;
+
+
+            if (!tickets.length) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="9"
+                            class="message">
+                            No tickets found.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+
+            }
+
+
+            table.innerHTML = "";
+
+
+            tickets.forEach(
+                ticket => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    // -----------------------------------------
+                    // TICKET ID
+                    // -----------------------------------------
+
+                    const ticketId =
+                        ticket[
+                            "Ticket ID"
+                        ] ||
+                        "-";
+
+
+                    // -----------------------------------------
+                    // CUSTOMER
+                    // -----------------------------------------
+
+                    const customerName =
+                        ticket[
+                            "Customer Name"
+                        ] ||
+                        "-";
+
+
+                    const customerEmail =
+                        ticket[
+                            "Email"
+                        ] ||
+                        "-";
+
+
+                    // -----------------------------------------
+                    // ISSUE
+                    // -----------------------------------------
+
+                    const issue =
+                        ticket[
+                            "Issue"
+                        ] ||
+                        "No issue description";
+
+
+                    // -----------------------------------------
+                    // SUPPORT TYPE
+                    // -----------------------------------------
+
+                    const supportType =
+                        ticket[
+                            "Support Type"
+                        ] ||
+                        "-";
+
+
+                    // -----------------------------------------
+                    // PRIORITY
+                    // -----------------------------------------
+
+                    const priority =
+                        ticket[
+                            "Priority"
+                        ] ||
+                        "Medium";
+
+
+                    // -----------------------------------------
+                    // STATUS
+                    // -----------------------------------------
+
+                    const status =
+                        ticket[
+                            "Status"
+                        ] ||
+                        "Open";
+
+
+                    // -----------------------------------------
+                    // ENGINEER
+                    // -----------------------------------------
+
+                    const engineer =
+                        ticket[
+                            "Assigned Engineer"
+                        ] ||
+                        "";
+
+
+                    // -----------------------------------------
+                    // APPOINTMENT
+                    // -----------------------------------------
+
+                    const appointmentDate =
+                        ticket[
+                            "Appointment Date"
+                        ] ||
+                        "";
+
+
+                    const appointmentTime =
+                        ticket[
+                            "Appointment Time"
+                        ] ||
+                        "";
+
+
+                    // -----------------------------------------
+                    // STATUS CLASS
+                    // -----------------------------------------
+
+                    let statusClass =
+                        "status-open";
+
+
+                    if (
+                        status ===
+                        "In Progress"
+                    ) {
+
+                        statusClass =
+                            "status-progress";
+
+                    } else if (
+                        status ===
+                        "Pending"
+                    ) {
+
+                        statusClass =
+                            "status-pending";
+
+                    } else if (
+                        status ===
+                        "Closed"
+                    ) {
+
+                        statusClass =
+                            "status-closed";
+
+                    }
+
+
+                    // -----------------------------------------
+                    // PRIORITY CLASS
+                    // -----------------------------------------
+
+                    let priorityClass =
+                        "priority-medium";
+
+
+                    if (
+                        priority ===
+                        "Low"
+                    ) {
+
+                        priorityClass =
+                            "priority-low";
+
+                    } else if (
+                        priority ===
+                        "High"
+                    ) {
+
+                        priorityClass =
+                            "priority-high";
+
+                    } else if (
+                        priority ===
+                        "Critical"
+                    ) {
+
+                        priorityClass =
+                            "priority-critical";
+
+                    }
+
+
+                    // -----------------------------------------
+                    // ENGINEER HTML
+                    // -----------------------------------------
+
+                    let engineerHTML =
+                        `
+                        <span class="engineer-name">
+                            Unassigned
+                        </span>
+                        `;
+
+
+                    if (engineer) {
+
+                        const initials =
+                            getInitials(
+                                engineer
+                            );
+
+
+                        engineerHTML = `
+                            <div class="engineer">
+                                <div class="engineer-avatar">
+                                    ${escapeHTML(
+                                        initials
+                                    )}
+                                </div>
+
+                                <span class="engineer-name">
+                                    ${escapeHTML(
+                                        engineer
+                                    )}
+                                </span>
+                            </div>
+                        `;
+
+                    }
+
+
+                    // -----------------------------------------
+                    // APPOINTMENT HTML
+                    // -----------------------------------------
+
+                    let appointmentHTML =
+                        `
+                        <span class="no-appointment">
+                            —
+                        </span>
+                        `;
+
+
+                    if (
+                        appointmentDate &&
+                        appointmentTime
+                    ) {
+
+                        appointmentHTML = `
+                            <div>
+                                <div class="appointment-date">
+                                    ${escapeHTML(
+                                        formatDate(
+                                            appointmentDate
+                                        )
+                                    )}
+                                </div>
+
+                                <div class="appointment-time">
+                                    ${escapeHTML(
+                                        formatAppointmentTime(
+                                            appointmentTime
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        `;
+
+                    }
+
+
+                    // -----------------------------------------
+                    // BUILD ROW
+                    // -----------------------------------------
+
+                    row.innerHTML = `
+
+                        <td>
+
+                            <div class="ticket-id">
+                                ${escapeHTML(
+                                    ticketId
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="customer-name">
+                                ${escapeHTML(
+                                    customerName
+                                )}
+                            </div>
+
+                            <div class="customer-email">
+                                ${escapeHTML(
+                                    customerEmail
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="issue-text"
+                                title="${escapeHTML(
+                                    issue
+                                )}">
+
+                                ${escapeHTML(
+                                    issue
+                                )}
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="support-type">
+                                ${escapeHTML(
+                                    supportType
+                                )}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="priority ${priorityClass}">
+
+                                ${escapeHTML(
+                                    priority
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="status ${statusClass}">
+
+                                ${escapeHTML(
+                                    status
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${engineerHTML}
+
+                        </td>
+
+
+                        <td>
+
+                            ${appointmentHTML}
+
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                class="view-button"
+                                onclick="viewTicket(
+                                    '${escapeJS(
+                                        ticketId
+                                    )}'
+                                )">
+
+                                View
+
+                            </button>
+
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =====================================================
+        // VIEW TICKET
+        // =====================================================
+
+        function viewTicket(
+            ticketId
+        ) {
+
+            if (!ticketId) {
+
+                return;
+
+            }
+
+
+            window.location.href =
+                `/ticket-details.html?id=${encodeURIComponent(
+                    ticketId
+                )}`;
+
+        }
+
+
+        // =====================================================
+        // CLEAR FILTERS
+        // =====================================================
+
+        function clearFilters() {
+
+            document.getElementById(
+                "statusFilter"
+            ).value = "";
+
+
+            document.getElementById(
+                "priorityFilter"
+            ).value = "";
+
+
+            document.getElementById(
+                "engineerFilter"
+            ).value = "";
+
+
+            document.getElementById(
+                "supportTypeFilter"
+            ).value = "";
+
+
+            applyFilters();
+
+        }
+
+
+        // =====================================================
+        // FORMAT DATE
+        // =====================================================
+
+        function formatDate(
+            value
+        ) {
+
+            if (!value) {
+
+                return "-";
+
+            }
+
+
+            try {
+
+                const date =
+                    new Date(
+                        value
+                    );
+
+
+                if (
+                    isNaN(
+                        date.getTime()
+                    )
+                ) {
+
+                    return value;
+
+                }
+
+
+                return date.toLocaleDateString(
+                    "en-SG",
+                    {
+                        timeZone:
+                            "Asia/Singapore",
+
+                        year:
+                            "numeric",
+
+                        month:
+                            "short",
+
+                        day:
+                            "2-digit"
+                    }
+                );
+
+            } catch (error) {
+
+                return value;
+
+            }
+
+        }
+
+
+        // =====================================================
+        // FORMAT APPOINTMENT TIME
+        // =====================================================
+
+        function formatAppointmentTime(
+            time
+        ) {
+
+            if (!time) {
+
+                return "-";
+
+            }
+
+
+            const parts =
+                String(time).split(
+                    ":"
+                );
+
+
+            if (
+                parts.length < 2
+            ) {
+
+                return time;
+
+            }
+
+
+            let hours =
+                parseInt(
+                    parts[0],
+                    10
+                );
+
+
+            const minutes =
+                parts[1];
+
+
+            if (
+                isNaN(hours)
+            ) {
+
+                return time;
+
+            }
+
+
+            const suffix =
+                hours >= 12
+                    ? "PM"
+                    : "AM";
+
+
+            hours =
+                hours % 12 || 12;
+
+
+            return `${hours}:${minutes} ${suffix}`;
+
+        }
+
+
+        // =====================================================
+        // GET INITIALS
+        // =====================================================
+
+        function getInitials(
+            name
+        ) {
+
+            if (!name) {
+
+                return "—";
+
+            }
+
+
+            const words =
+                name
+                    .trim()
+                    .split(
+                        /\s+/
+                    );
+
+
+            if (
+                words.length === 1
+            ) {
+
+                return words[0]
+                    .substring(
+                        0,
+                        2
+                    )
+                    .toUpperCase();
+
+            }
+
+
+            return (
+                words[0][0] +
+                words[
+                    words.length - 1
+                ][0]
+            ).toUpperCase();
+
+        }
+
+
+        // =====================================================
+        // ESCAPE HTML
+        // =====================================================
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        // =====================================================
+        // ESCAPE JAVASCRIPT STRING
+        // =====================================================
+
+        function escapeJS(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /\\/g,
+                    "\\\\"
+                )
+                .replace(
+                    /'/g,
+                    "\\'"
+                )
+                .replace(
+                    /"/g,
+                    '\\"'
+                )
+                .replace(
+                    /\n/g,
+                    "\\n"
+                )
+                .replace(
+                    /\r/g,
+                    "\\r"
+                );
+
+        }
+
+
+        // =====================================================
+        // FILTER EVENT LISTENERS
+        // =====================================================
+
+        document
+            .getElementById(
+                "statusFilter"
+            )
+            .addEventListener(
+                "change",
+                applyFilters
+            );
+
+
+        document
+            .getElementById(
+                "priorityFilter"
+            )
+            .addEventListener(
+                "change",
+                applyFilters
+            );
+
+
+        document
+            .getElementById(
+                "engineerFilter"
+            )
+            .addEventListener(
+                "change",
+                applyFilters
+            );
+
+
+        document
+            .getElementById(
+                "supportTypeFilter"
+            )
+            .addEventListener(
+                "change",
+                applyFilters
+            );
+
+
+        // =====================================================
+        // INITIAL LOAD
+        // =====================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                loadTickets();
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
