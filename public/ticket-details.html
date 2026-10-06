@@ -1222,21 +1222,6 @@
 
                     <div class="section-divider"></div>
 
-                    <!-- =====================================================
-     KNOWLEDGE BASE
-====================================================== -->
-
-<div class="card" id="knowledgeBaseCard">
-
-    <h2>🔎 Related Knowledge Articles</h2>
-
-    <p id="knowledgeBaseMessage">
-        Searching for relevant troubleshooting articles...
-    </p>
-
-    <div id="knowledgeBaseResults"></div>
-
-</div>
                     <!-- SERVICE RESULT -->
 
                     <section class="section">
@@ -1351,7 +1336,72 @@
 
                     </section>
 
+                    <!-- AI SUPPORT ASSISTANT -->
 
+<section class="section" id="aiSupportSection">
+
+    <h2 class="section-title">
+        AI Support Assistant
+    </h2>
+
+    <div class="work-session-box">
+
+        <p style="
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: 0;
+        ">
+            Analyze this ticket using the Knowledge Base
+            and generate an IT support recommendation.
+        </p>
+
+        <button
+            type="button"
+            class="save-button"
+            id="aiAnalyzeButton"
+            onclick="analyzeTicketWithAI()"
+            style="width: 100%;">
+
+            Analyze Ticket
+
+        </button>
+
+        <div
+            id="aiLoading"
+            style="
+                display: none;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #64748b;
+            ">
+
+            Analyzing ticket...
+
+        </div>
+
+        <div
+            id="aiResult"
+            style="
+                display: none;
+                margin-top: 15px;
+            ">
+
+            <div id="aiResult">
+
+    <div id="aiResponse"></div>
+
+    <div id="aiSource" style="margin-top: 15px;"></div>
+
+</div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<div class="section-divider"></div>
                     <!-- UPDATE TICKET -->
 
                     <section class="section">
@@ -2219,10 +2269,6 @@
             ).textContent =
                     ticket["Issue"] ||
             "No issue description provided.";
-
-            loadRelatedKnowledgeArticles(
-                    ticket["Issue"] || ""
-            );
 
             // APPOINTMENT VISIBILITY
             const appointmentInfoSection =
@@ -4814,10 +4860,405 @@ if (
 
         }
 
+        // AI SUPPORT ASSISTANT
+        async function analyzeTicketWithAI() {
 
-        // ============================================================
+    if (!currentTicket) {
+
+        alert(
+            "Ticket information is not loaded yet."
+        );
+
+        return;
+    }
+
+
+    const issue =
+        String(
+            currentTicket["Issue"] || ""
+        ).trim();
+
+
+    if (!issue) {
+
+        alert(
+            "This ticket does not have an issue."
+        );
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "aiAnalyzeButton"
+        );
+
+    const loading =
+        document.getElementById(
+            "aiLoading"
+        );
+
+    const result =
+        document.getElementById(
+            "aiResult"
+        );
+
+    const responseBox =
+        document.getElementById(
+            "aiResponse"
+        );
+
+    const sourceBox =
+        document.getElementById(
+            "aiSource"
+        );
+
+
+    // ========================================================
+    // SHOW LOADING
+    // ========================================================
+
+    button.disabled = true;
+
+    button.textContent =
+        "Analyzing...";
+
+    loading.style.display =
+        "block";
+
+    result.style.display =
+        "none";
+
+    responseBox.innerHTML =
+        "";
+
+    if (sourceBox) {
+
+        sourceBox.innerHTML =
+            "";
+
+    }
+
+
+    try {
+
+        // ====================================================
+        // SEND REQUEST TO AI BACKEND
+        // ====================================================
+
+        const response =
+            await fetch(
+                "/api/ai-support",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            issue: issue
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // ====================================================
+        // CHECK RESPONSE
+        // ====================================================
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "AI analysis failed."
+            );
+
+        }
+
+
+        // ====================================================
+        // GET AI RESPONSE
+        // ====================================================
+
+        const aiText =
+            data.aiResponse ||
+            "No AI recommendation was returned.";
+
+
+        // ====================================================
+        // CLEAN QWEN FORMATTING
+        // ====================================================
+
+        const cleanedAI =
+            aiText
+                .replace(
+                    /^#{1,6}\s*/gm,
+                    ""
+                )
+                .replace(
+                    /\\/g,
+                    ""
+                )
+                .replace(
+                    /\n{3,}/g,
+                    "\n\n"
+                )
+                .trim();
+
+        // EXTRACT TROUBLESHOOTING
+
+        const troubleshootingMatch =
+            cleanedAI.match(
+                /Recommended Troubleshooting:\s*([\s\S]*?)(?=Related Knowledge Base:|$)/i
+            );
+
+        // EXTRACT RELATED KNOWLEDGE BASE
+        
+        const kbMatch =
+            cleanedAI.match(
+                /Related Knowledge Base:\s*([\s\S]*)/i
+            );
+
+
+        const troubleshooting =
+            troubleshootingMatch
+                ? troubleshootingMatch[1].trim()
+                : "No troubleshooting steps provided.";
+
+
+        const relatedKB =
+            kbMatch
+                ? kbMatch[1].trim()
+                : "No related Knowledge Base article provided.";
+
+
+        // DISPLAY AI RESPONSE
+
+        responseBox.innerHTML = `
+
+            <div class="ai-section">
+
+                <h4>
+                    Recommended Troubleshooting
+                </h4>
+
+                <div>
+                    ${formatAIText(troubleshooting)}
+                </div>
+
+            </div>
+
+
+            <div class="ai-section">
+
+                <h4>
+                    Related Knowledge Base
+                </h4>
+
+                <div>
+                    ${formatAIText(relatedKB)}
+                </div>
+
+            </div>
+
+        `;
+
+
+        // ====================================================
+        // DISPLAY MICROSOFT SOURCE
+        // ====================================================
+
+        const relatedArticles =
+            data.relatedArticles || [];
+
+
+        const sourceArticle =
+            relatedArticles[0];
+
+
+        if (
+            sourceArticle &&
+            sourceBox
+        ) {
+
+            sourceBox.innerHTML = `
+
+                <strong>
+                    Source:
+                </strong>
+
+                ${escapeHTML(
+                    sourceArticle.source ||
+                    "Microsoft Support"
+                )}
+
+                <br>
+
+                <a
+                    href="${sourceArticle.sourceUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View Microsoft Article →
+                </a>
+
+            `;
+
+        }
+
+
+        // ====================================================
+        // SHOW RESULT
+        // ====================================================
+
+        result.style.display =
+            "block";
+
+
+    } catch (error) {
+
+        console.error(
+            "AI Support error:",
+            error
+        );
+
+
+        responseBox.textContent =
+            "Unable to generate an AI recommendation.\n\n" +
+            error.message;
+
+
+        result.style.display =
+            "block";
+
+
+    } finally {
+
+        // ====================================================
+        // STOP LOADING
+        // ====================================================
+
+        loading.style.display =
+            "none";
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Analyze Ticket";
+
+    }
+
+}
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHTML(text) {
+
+    return String(text)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ============================================================
+// FORMAT AI TEXT
+// ============================================================
+
+function formatAIText(text) {
+
+    const lines =
+        String(text)
+            .split("\n")
+            .map(
+                line =>
+                    line.trim()
+            )
+            .filter(
+                line =>
+                    line !== ""
+            );
+
+
+    return lines
+        .map(
+            line => {
+
+                // Remove escaped hyphen
+                line =
+                    line.replace(
+                        /^\\-\s*/,
+                        "- "
+                    );
+
+
+                // Bullet point
+                if (
+                    line.startsWith("- ")
+                ) {
+
+                    return `
+                        <div class="ai-bullet">
+                            • ${escapeHTML(
+                                line.substring(2)
+                            )}
+                        </div>
+                    `;
+
+                }
+
+
+                // Normal text
+                return `
+                    <div>
+                        ${escapeHTML(line)}
+                    </div>
+                `;
+
+            }
+        )
+        .join("");
+
+}
         // DELETE TICKET
-        // ============================================================
 
         async function deleteTicket() {
 
@@ -5189,340 +5630,6 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 
 }
-// KNOWLEDGE BASE - LOAD RELATED ARTICLES
-
-async function loadRelatedKnowledgeArticles(issue) {
-
-    const results =
-        document.getElementById(
-            "knowledgeBaseResults"
-        );
-
-    const message =
-        document.getElementById(
-            "knowledgeBaseMessage"
-        );
-
-
-    if (!results || !message) {
-
-        console.error(
-            "Knowledge Base HTML elements not found."
-        );
-
-        return;
-    }
-
-
-    if (!issue) {
-
-        message.textContent =
-            "No issue information available.";
-
-        results.innerHTML = "";
-
-        return;
-    }
-
-
-    message.textContent =
-        "Searching for relevant troubleshooting articles...";
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/knowledge-base"
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            throw new Error(
-                "Knowledge Base API returned success=false."
-            );
-
-        }
-
-
-        const articles =
-            data.articles || [];
-
-
-        // ====================================================
-        // GET ISSUE WORDS
-        // ====================================================
-
-        const issueWords =
-            String(issue)
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, "")
-                .split(/\s+/)
-                .filter(
-                    word =>
-                        word.length > 2
-                );
-
-
-        // ====================================================
-        // FIND MATCHING ARTICLES
-        // ====================================================
-
-        const matchedArticles =
-            articles.filter(article => {
-
-                const status =
-                    String(
-                        article.Status || ""
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                if (
-                    status !== "published"
-                ) {
-
-                    return false;
-
-                }
-
-
-                const searchableText = (
-
-                    String(
-                        article.Title || ""
-                    ) + " " +
-
-                    String(
-                        article.Category || ""
-                    ) + " " +
-
-                    String(
-                        article.Problem || ""
-                    ) + " " +
-
-                    String(
-                        article.Solution || ""
-                    ) + " " +
-
-                    String(
-                        article.Resolution || ""
-                    )
-
-                ).toLowerCase();
-
-
-                return issueWords.some(
-                    word =>
-                        searchableText.includes(
-                            word
-                        )
-                );
-
-            });
-
-
-        // ====================================================
-        // CLEAR RESULTS
-        // ====================================================
-
-        results.innerHTML = "";
-
-
-        // ====================================================
-        // NO MATCHES
-        // ====================================================
-
-        if (
-            matchedArticles.length === 0
-        ) {
-
-            message.textContent =
-                "No related knowledge articles found.";
-
-            return;
-
-        }
-
-
-        // ====================================================
-        // MATCHES FOUND
-        // ====================================================
-
-        message.textContent =
-            `${matchedArticles.length} related article(s) found.`;
-
-
-        // ====================================================
-        // DISPLAY ARTICLES
-        // ====================================================
-
-        matchedArticles.forEach(
-            article => {
-
-                const articleDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                articleDiv.className =
-                    "knowledge-article";
-
-
-                articleDiv.innerHTML = `
-
-                    <div>
-
-                        <span class="knowledge-category">
-
-                            ${escapeHtml(
-                                article.Category ||
-                                "General"
-                            )}
-
-                        </span>
-
-
-                        <h3>
-
-                            ${escapeHtml(
-                                article.Title ||
-                                "Untitled"
-                            )}
-
-                        </h3>
-
-
-                        <p>
-
-                            <strong>Problem:</strong><br>
-
-                            ${escapeHtml(
-                                article.Problem ||
-                                "No problem provided."
-                            )}
-
-                        </p>
-
-
-                        <p>
-
-                            <strong>Solution:</strong><br>
-
-                            ${escapeHtml(
-                                article.Solution ||
-                                "No solution provided."
-                            )}
-
-                        </p>
-
-
-                        <p>
-
-                            <strong>Resolution:</strong><br>
-
-                            ${escapeHtml(
-                                article.Resolution ||
-                                "No resolution provided."
-                            )}
-
-                        </p>
-
-
-                        <p>
-
-                            <strong>Author:</strong>
-
-                            ${escapeHtml(
-                                article.Author ||
-                                "Unknown"
-                            )}
-
-                        </p>
-
-
-                        <p>
-
-                            <strong>Created Date:</strong>
-
-                            ${formatKnowledgeDate(
-                                article["Created Date"]
-                            )}
-
-                        </p>
-
-
-                        <p>
-
-                            <strong>Updated Date:</strong>
-
-                            ${formatKnowledgeDate(
-                                article["Updated Date"]
-                            )}
-
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        onclick="viewKnowledgeArticle('${String(
-                            article["Article ID"] ||
-                            ""
-                        ).replace(
-                            /'/g,
-                            "\\'"
-                        )}')"
-                    >
-
-                        View Article
-
-                    </button>
-
-                `;
-
-
-                results.appendChild(
-                    articleDiv
-                );
-
-            }
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Knowledge Base error:",
-            error
-        );
-
-
-        message.textContent =
-            "Unable to load knowledge base.";
-
-    }
-
-}
-
 
 // ============================================================
 // FORMAT KNOWLEDGE BASE DATE

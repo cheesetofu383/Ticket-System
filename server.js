@@ -14,13 +14,18 @@ const PORT = process.env.PORT || 3000;
 // GOOGLE CALENDAR AUTHENTICATION
 // ============================================================
 
-const googleKeyFile = path.join(
-    __dirname,
-    "google-service-account.json"
-);
-
 const googleAuth = new google.auth.GoogleAuth({
-    keyFile: googleKeyFile,
+    credentials: process.env.GOOGLE_SERVICE_ACCOUNT
+        ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT)
+        : undefined,
+
+    keyFile: process.env.GOOGLE_SERVICE_ACCOUNT
+        ? undefined
+        : path.join(
+            __dirname,
+            "google-service-account.json"
+        ),
+
     scopes: [
         "https://www.googleapis.com/auth/calendar"
     ]
@@ -5049,6 +5054,443 @@ app.get("/api/knowledge-base", (req, res) => {
             message: "Failed to load Knowledge Base."
         });
     }
+});
+
+app.post("/api/ai-support", async (req, res) => {
+
+    try {
+
+        const { issue } = req.body;
+
+        if (!issue || !String(issue).trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Issue is required."
+            });
+        }
+
+        // --------------------------------------------------------
+        // READ KNOWLEDGE BASE
+        // --------------------------------------------------------
+
+        const workbook = XLSX.readFile(excelFile);
+
+        const sheet =
+            workbook.Sheets["Knowledge-Base"];
+
+        if (!sheet) {
+            return res.status(404).json({
+                success: false,
+                message: "Knowledge-Base sheet not found."
+            });
+        }
+
+        const articles =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                { defval: "" }
+            );
+
+        // --------------------------------------------------------
+        // FIND RELEVANT KNOWLEDGE BASE ARTICLES
+        // --------------------------------------------------------
+
+        const issueText =
+            String(issue).toLowerCase();
+
+        const issueWords =
+            issueText
+                .split(/\s+/)
+                .filter(word => word.length > 2);
+
+        const scoredArticles =
+            articles.map(article => {
+
+                let score = 0;
+
+                const title =
+                    String(article["Title"] || "")
+                        .toLowerCase();
+
+                const problem =
+                    String(article["Problem"] || "")
+                        .toLowerCase();
+
+                const solution =
+                    String(article["Solution"] || "")
+                        .toLowerCase();
+
+                const resolution =
+                    String(article["Resolution"] || "")
+                        .toLowerCase();
+
+                const category =
+                    String(article["Category"] || "")
+                        .toLowerCase();
+
+                for (const word of issueWords) {
+
+                    if (title.includes(word)) {
+                        score += 4;
+                    }
+
+                    if (problem.includes(word)) {
+                        score += 3;
+                    }
+
+                    if (category.includes(word)) {
+                        score += 2;
+                    }
+
+                    if (solution.includes(word)) {
+                        score += 1;
+                    }
+
+                    if (resolution.includes(word)) {
+                        score += 1;
+                    }
+                }
+
+                return {
+                    article,
+                    score
+                };
+
+            });
+
+        const relevantArticles =
+            scoredArticles
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 3)
+                .map(item => item.article);
+
+        // --------------------------------------------------------
+        // BUILD KNOWLEDGE BASE CONTEXT
+        // --------------------------------------------------------
+
+        let knowledgeContext = "";
+
+        if (relevantArticles.length === 0) {
+
+            knowledgeContext =
+                "No relevant Knowledge Base articles were found.";
+
+        } else {
+
+            knowledgeContext =
+                relevantArticles
+                    .map(article => {
+
+                        return `
+Article ID: ${article["Article ID"]}
+Title: ${article["Title"]}
+Category: ${article["Category"]}
+Problem: ${article["Problem"]}
+Solution: ${article["Solution"]}
+Resolution: ${article["Resolution"]}
+Source: ${article["Source"]}
+Source URL: ${article["Source URL"]}
+`;
+
+                    })
+                    .join("\n----------------------\n");
+        }
+
+        // --------------------------------------------------------
+        // FETCH APPROVED MICROSOFT SOURCE
+        // --------------------------------------------------------
+
+        let externalSourceContext =
+            "No external source information was retrieved.";
+
+        const bestArticle =
+            relevantArticles.length > 0
+                ? relevantArticles[0]
+                : null;
+
+        if (bestArticle) {
+
+            const sourceUrl =
+                String(
+                    bestArticle["Source URL"] || ""
+                ).trim();
+
+            if (sourceUrl) {
+
+                try {
+
+                    const parsedUrl =
+                        new URL(sourceUrl);
+
+                    // Only allow Microsoft sources
+                    if (
+                        !parsedUrl.hostname
+                            .toLowerCase()
+                            .endsWith("microsoft.com")
+                    ) {
+                        throw new Error(
+                            "Source URL is not an approved Microsoft domain."
+                        );
+                    }
+
+                    const sourceResponse =
+                        await fetch(sourceUrl, {
+                            method: "GET",
+                            headers: {
+                                "User-Agent":
+                                    "Mozilla/5.0 IT-Ticketing-System"
+                            }
+                        });
+
+                    if (!sourceResponse.ok) {
+
+                        throw new Error(
+                            `Microsoft source returned HTTP ${sourceResponse.status}`
+                        );
+                    }
+
+                    const html =
+    await sourceResponse.text();
+                    
+    
+
+// Try to extract only the main article section
+const mainMatch =
+    html.match(/<main[\s\S]*?<\/main>/i);
+
+let articleHtml =
+    mainMatch ? mainMatch[0] : html;
+
+articleHtml =
+    articleHtml
+        .replace(/<script[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+        .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+        .replace(/<nav[\s\S]*?<\/nav>/gi, " ")
+        .replace(/<header[\s\S]*?<\/header>/gi, " ")
+        .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
+        .replace(/<svg[\s\S]*?<\/svg>/gi, " ");
+
+// Remove HTML tags
+let articleText =
+    articleHtml.replace(/<[^>]+>/g, " ");
+
+// Remove Microsoft page content that appears before the actual article
+const articleStart =
+    articleText.indexOf(
+        "If you have messages piling up in your Outlook outbox"
+    );
+
+if (articleStart !== -1) {
+    articleText =
+        articleText.substring(articleStart);
+}
+                    
+
+                    // Decode common HTML entities
+                    articleText =
+                        articleText
+                            .replace(/&nbsp;/gi, " ")
+                            .replace(/&amp;/gi, "&")
+                            .replace(/&quot;/gi, '"')
+                            .replace(/&#39;/gi, "'")
+                            .replace(/&lt;/gi, "<")
+                            .replace(/&gt;/gi, ">");
+
+                    // Clean whitespace
+                    articleText =
+                        articleText
+                            .replace(/\s+/g, " ")
+                            .trim();
+
+                    // Prevent an enormous webpage from being sent to Qwen
+                    const maxSourceLength = 12000;
+
+                    if (articleText.length > maxSourceLength) {
+                        articleText =
+                            articleText.substring(
+                                0,
+                                maxSourceLength
+                            ) +
+                            "\n[Microsoft article content truncated]";
+                    }
+
+                    externalSourceContext = `
+Source: ${bestArticle["Source"] || "Microsoft Support"}
+Source URL: ${sourceUrl}
+
+Microsoft article content:
+${articleText}
+`;
+
+                } catch (sourceError) {
+
+                    console.error(
+                        "Microsoft source fetch error:",
+                        sourceError.message
+                    );
+
+                    externalSourceContext = `
+The approved Microsoft source could not be retrieved.
+
+Source:
+${bestArticle["Source"] || "Microsoft Support"}
+
+Source URL:
+${sourceUrl}
+
+Do not invent information from the unavailable source.
+`;
+                }
+            }
+        }
+
+        // --------------------------------------------------------
+        // SEND REQUEST TO OLLAMA
+        // --------------------------------------------------------
+        console.log("========== MICROSOFT SOURCE ==========");
+console.log(externalSourceContext);
+console.log("======================================");
+        const prompt = `
+You are an IT support assistant.
+
+Analyze the customer's ticket using only the provided Knowledge Base information and the retrieved approved Microsoft source to answer to the issue.
+IMPORTANT OUTPUT FORMAT:
+Your response will be processed automatically by software.
+
+Return ONLY plain text.
+
+Never output:
+- Markdown headings
+- Markdown numbered lists
+- Markdown bullet symbols
+- Backslash escapes
+- Numbered prefixes such as 1., 2., 3., 4.
+- Bullet prefixes such as •, *, or +
+- Any text after the Related Knowledge Base article
+
+Troubleshooting steps MUST begin with exactly: -
+- Leave exactly one blank line between each troubleshooting step.
+
+Inputs provided at runtime:
+Customer issue:
+${issue}
+
+Knowledge Base:
+${knowledgeContext}
+
+Approved External Source:
+${externalSourceContext}
+
+Output Requirements:
+Provide a concise IT support recommendation using ONLY plain text.
+
+Your response must contain ONLY these 2 exact sections:
+
+1. Recommended Troubleshooting:
+- Every troubleshooting step must start with exactly "- " and must not use numbers, bullet symbols, or other prefixes.
+- Do NOT include more than 4 troubleshooting steps under any circumstances
+- Provide up to 4 troubleshooting steps. If 4 relevant steps are supported by the sources, provide EXACTLY 4. NEVER provide more than 4 steps.
+- If fewer than 4 relevant steps are supported, provide only the supported steps.
+- Each step must be no more than 20 words.
+- Each step must be concise, simple, and directly actionable.
+- Prioritize basic troubleshooting steps before advanced or external support steps.
+- Use the Solution from the most relevant Knowledge Base article and relevant actions from the Microsoft source.
+- Summarize Microsoft instructions into the essential action; do NOT copy detailed instructions, paragraphs, or explanations.
+- Do NOT include URLs, web addresses, browser names, or detailed menu/tab/interface navigation paths.
+- Do NOT invent steps or use general IT knowledge.
+
+2. Related Knowledge Base:
+- Mention ONLY the Article ID and Title of the most relevant Knowledge Base article.
+- Use strictly this format:
+  A-XXX - Article Title
+
+  Strict Rules:
+- Rely ONLY on the provided Knowledge Base and retrieved Microsoft source.
+- Do NOT use outside knowledge, assumptions, or unstated technical details.
+- Every troubleshooting step must be directly supported by the provided text.
+- If the sources do not contain enough information, state that clearly under the appropriate section.
+
+
+`;
+
+
+        const ollamaResponse =
+            await fetch(
+                "http://localhost:11434/api/generate",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        model: "qwen2.5:3b",
+                        prompt: prompt,
+                        stream: false
+                    })
+                }
+            );
+
+        if (!ollamaResponse.ok) {
+
+            throw new Error(
+                `Ollama returned HTTP ${ollamaResponse.status}`
+            );
+        }
+
+        const data =
+            await ollamaResponse.json();
+
+        // --------------------------------------------------------
+        // RETURN AI RESPONSE
+        // --------------------------------------------------------
+
+        res.json({
+            success: true,
+
+            aiResponse:
+                data.response,
+
+            relatedArticles:
+                relevantArticles.map(
+                    article => ({
+                        articleId:
+                            article["Article ID"],
+
+                        title:
+                            article["Title"],
+
+                        source:
+                            article["Source"],
+
+                        sourceUrl:
+                            article["Source URL"]
+                    })
+                )
+        });
+
+    } catch (error) {
+
+        console.error(
+            "AI Support error:",
+            error
+        );
+
+        res.status(500).json({
+            success: false,
+
+            message:
+                "Failed to generate AI support recommendation.",
+
+            error:
+                error.message
+        });
+    }
+
 });
 
 // START SERVER
